@@ -18,12 +18,12 @@ create table choice
 (
     id bigint not null
         primary key,
-    question_id bigint references questions(id),
+    question_id bigint references question(id),
     content varchar(300),
-    order numeric(2,0),
+    order_of_choice numeric(2,0),
     is_image boolean
 );
-1
+
 
 create table app_user
 (

@@ -1,7 +1,7 @@
 package com.kkkzoz.controller;
 
 
-import com.kkkzoz.domain.entity.User;
+import com.kkkzoz.domain.User;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.service.UserService;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/login")
-    public ResponseVO login(@RequestBody User user){
+    public ResponseVO login(@RequestParam User user){
         return userService.login(user);
     }
 

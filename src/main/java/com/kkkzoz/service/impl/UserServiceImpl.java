@@ -1,8 +1,7 @@
 package com.kkkzoz.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkkzoz.domain.entity.User;
-import com.kkkzoz.global.APIException;
+import com.kkkzoz.domain.User;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.service.UserService;

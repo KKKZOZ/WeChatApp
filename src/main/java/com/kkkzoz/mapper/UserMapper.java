@@ -1,9 +1,8 @@
 package com.kkkzoz.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.kkkzoz.domain.entity.User;
+import com.kkkzoz.domain.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserMapper extends BaseMapper<User> {

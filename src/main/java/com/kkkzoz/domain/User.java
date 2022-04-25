@@ -1,4 +1,4 @@
-package com.kkkzoz.domain.entity;
+package com.kkkzoz.domain;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;

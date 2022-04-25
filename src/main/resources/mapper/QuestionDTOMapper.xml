@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kkkzoz.mapper.QuestionDTOMapper">
+
+    <resultMap id="questionDTO" type="com.kkkzoz.dto.QuestionDTO">
+        <id column="id" property="id" />
+        <result column="category" property="category" />
+        <result column="text_content" property="textContent" />
+        <result column="img_content" property="imgContent" />
+        <result column="choice_number" property="choiceNumber" />
+        <result column="answers" property="answers" />
+        <result column="explanation" property="explanation" />
+
+        <collection property="choices" ofType="com.kkkzoz.domain.entity.Choice">
+            <result column="question_id" property="questionId" />
+            <result column="content" property="content" />
+            <result column="order_of_choice" property="orderOfChoice" />
+            <result column="is_image" property="isImage" />
+        </collection>
+    </resultMap>
+
+    <select id="getQuestionDTOById" resultMap="questionDTO">
+        select *
+        from question,
+             choice
+        where question.id = choice.question_id
+          and question.id = #{id}
+    </select>
+</mapper>
