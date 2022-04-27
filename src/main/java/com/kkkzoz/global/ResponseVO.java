@@ -6,7 +6,7 @@ import lombok.Getter;
 public class ResponseVO<T> {
 
     private final int code;
-    private final String message;
+    private final String msg;
     private final T data;
 
 
@@ -14,9 +14,15 @@ public class ResponseVO<T> {
         this(ResultCode.SUCCESS, data);
     }
 
+    public ResponseVO(int code, String message){
+        this.code = code;
+        this.msg = message;
+        this.data = null;
+    }
+
     public ResponseVO(ResultCode resultCode, T data) {
         this.code = resultCode.getCode();
-        this.message = resultCode.getMessage();
+        this.msg = resultCode.getMessage();
         this.data = data;
     }
 

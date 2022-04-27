@@ -4,7 +4,6 @@
 
     <resultMap id="questionDTO" type="com.kkkzoz.dto.QuestionDTO">
         <id column="id" property="id" />
-        <result column="category" property="category" />
         <result column="text_content" property="textContent" />
         <result column="img_content" property="imgContent" />
         <result column="choice_number" property="choiceNumber" />
@@ -19,11 +18,49 @@
         </collection>
     </resultMap>
 
-    <select id="getQuestionDTOById" resultMap="questionDTO">
+    <select id="getQuestionOneDTOById" resultMap="questionDTO">
         select *
-        from question,
+        from question_1,
              choice
-        where question.id = choice.question_id
-          and question.id = #{id}
+        where question_1.id = choice.question_id
+          and choice.category = 1
+          and question_1.id = #{id}
+    </select>
+
+    <select id="getQuestionFourDTOById" resultMap="questionDTO">
+        select *
+        from question_4,
+             choice
+        where question_4.id = choice.question_id
+          and choice.category = 4
+          and question_4.id = #{id}
+    </select>
+
+    <select id="getQuestionOneDTOBatch" resultMap="questionDTO">
+        select *
+        from (
+                 select*
+                 from question_1
+                 where id > #{questionId}
+                 order by id
+                 limit #{count}
+             ) as q,
+             choice
+        where q.id = choice.question_id
+          and choice.category = 1
+    </select>
+
+    <select id="getQuestionFourDTOBatch" resultMap="questionDTO">
+        select *
+        from (
+                 select*
+                 from question_4
+                 where id > #{questionId}
+                 order by id
+                 limit #{count}
+             ) as q,
+             choice
+        where q.id = choice.question_id
+          and choice.category = 4
     </select>
 </mapper>

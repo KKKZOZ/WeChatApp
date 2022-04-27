@@ -20,8 +20,6 @@ public class Question {
     
     private Long id;
     
-    private String category;
-    
     private String textContent;
     
     private String imgContent;
