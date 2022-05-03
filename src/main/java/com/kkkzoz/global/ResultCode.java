@@ -12,6 +12,8 @@ public enum ResultCode {
 
     QUESTIONS_GET_FAILED(2001,"题库剩余量为0"),
 
+    FAVORITE_POST_FAILED(3001,"该题已经存在"),
+
     ERROR(5000, "未知错误");
 
     private final int code;

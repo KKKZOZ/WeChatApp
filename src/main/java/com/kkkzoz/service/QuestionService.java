@@ -1,13 +1,18 @@
 package com.kkkzoz.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkkzoz.domain.entity.Favorite;
 import com.kkkzoz.domain.entity.Mistake;
+import com.kkkzoz.domain.entity.Test;
 import com.kkkzoz.dto.QuestionDTO;
 import com.kkkzoz.global.APIException;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
+import com.kkkzoz.mapper.FavoriteMapper;
 import com.kkkzoz.mapper.MistakeMapper;
 import com.kkkzoz.mapper.QuestionDTOMapper;
+import com.kkkzoz.repository.TestRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +29,11 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private final QuestionDTOMapper questionDTOMapper;
     private final MistakeMapper mistakeMapper;
+
+    private final FavoriteMapper favoriteMapper;
+
+
+    private final TestRepository testRepository;
 
 
 //    public List<QuestionDTO> getBatchQuestions(int id, String category) {
@@ -82,4 +93,57 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         }
         return null;
     }
-}
+
+    public List<Long> getMistakes(int userId, int category) {
+        QueryWrapper<Mistake> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("question_id")
+                .eq("user_id", userId)
+                .eq("category", category);
+
+        List<Long> questionIds = this.list(queryWrapper).stream().map(Mistake::getQuestionId).collect(Collectors.toList());
+        return questionIds;
+    }
+
+    public ResponseVO deleteMistake(int userId, int questionId, int category) {
+        this.remove(new QueryWrapper<Mistake>()
+                .eq("user_id", userId)
+                .eq("question_id", questionId)
+                .eq("category", category));
+        return new ResponseVO<>(ResultCode.SUCCESS);
+    }
+
+
+    public ResponseVO addFavorite(Favorite favorite) {
+        try {
+            favoriteMapper.insert(favorite);
+        } catch (Exception e) {
+            throw new APIException(ResultCode.FAVORITE_POST_FAILED);
+        }
+        return new ResponseVO<>(ResultCode.SUCCESS);
+    }
+
+    public ResponseVO addTestResult(Test test) {
+        testRepository.insert(test);
+        return new ResponseVO<>(ResultCode.SUCCESS);
+    }
+
+    public Test getTestResult(int userId, int testId, int category) {
+       return  testRepository.findByUserIdAndTestIdAndCategory( userId, testId, category);
+    }
+
+    public ResponseVO addPracticeStatus(int userId, int questionId, int category) {
+        //TODO: 细节待讨论
+        return null;
+    }
+
+    public List<Long> getFavorites(int userId, int category) {
+        QueryWrapper<Favorite> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("question_id")
+                .eq("user_id", userId)
+                .eq("category", category);
+
+        List<Long> questionIds = favoriteMapper.selectList(queryWrapper).stream().map(Favorite::getQuestionId).collect(Collectors.toList());
+        return questionIds;
+    }
+}//End of the class
+

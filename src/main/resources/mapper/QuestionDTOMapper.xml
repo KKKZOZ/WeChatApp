@@ -7,7 +7,7 @@
         <result column="text_content" property="textContent" />
         <result column="img_content" property="imgContent" />
         <result column="choice_number" property="choiceNumber" />
-        <result column="answers" property="answers" />
+        <result column="answer" property="answer" />
         <result column="explanation" property="explanation" />
 
         <collection property="choices" ofType="com.kkkzoz.domain.entity.Choice">

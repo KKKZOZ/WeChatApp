@@ -6,9 +6,9 @@ create table question_1
     text_content  varchar(500),
     img_content   varchar(100),
     choice_number numeric(2),
-    answers       varchar(10),
+    answer       int,
     explanation   varchar(400),
-    unique ("text_content", "img_content", "choice_number", "answers",explanation)
+    unique ("text_content", "img_content", "choice_number", "answer",explanation)
 );
 
 -- 科目四题库
@@ -19,9 +19,9 @@ create table question_4
     text_content  varchar(500),
     img_content   varchar(100),
     choice_number numeric(2),
-    answers       varchar(10),
+    answer       int,
     explanation   varchar(400),
-    unique ("text_content", "img_content", "choice_number", "answers",explanation)
+    unique ("text_content", "img_content", "choice_number", "answer",explanation)
 );
 
 
@@ -61,3 +61,20 @@ create table mistake
     primary key (id),
     UNIQUE (user_id, question_id, category, wrong_choice)
 );
+
+-- 收藏
+create table favorite
+(
+    id           bigserial,
+    user_id      bigint,
+    question_id  bigint,
+    category     int,
+    primary key (id),
+    UNIQUE (user_id, question_id, category)
+);
+
+
+create table practice_status
+(
+
+)

@@ -26,7 +26,7 @@ public class Question {
     
     private Integer choiceNumber;
     
-    private String answers;
+    private String answer;
     
     private String explanation;
 }

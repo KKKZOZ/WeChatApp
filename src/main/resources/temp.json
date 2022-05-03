@@ -1,0 +1,24 @@
+{
+  "userId": 31,
+  "testId": 41,
+  "category": 1,
+  "score": 97,
+  "questions": [
+    {
+      "answer": 2,
+      "questionId": 62
+    },
+    {
+      "answer": 3,
+      "questionId": 66
+    },
+    {
+      "questionId": 88,
+      "answer": 1
+    },
+    {
+      "questionId": 9,
+      "answer": 2
+    }
+  ]
+}
