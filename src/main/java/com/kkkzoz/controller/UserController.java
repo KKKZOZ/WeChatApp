@@ -1,7 +1,7 @@
 package com.kkkzoz.controller;
 
 
-import com.kkkzoz.domain.User;
+import com.kkkzoz.domain.entity.User;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.service.UserService;
 import lombok.AllArgsConstructor;

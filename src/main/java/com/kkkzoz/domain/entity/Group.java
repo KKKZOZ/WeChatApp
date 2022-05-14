@@ -1,6 +1,7 @@
 package com.kkkzoz.domain.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,14 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Favorite {
-
+@TableName("class_group")
+public class Group {
+    
     private Long id;
-
-    private Long userId;
-
-    private Long questionId;
-
-    private Integer category;
+    
+    private Long teacherId;
+    
+    private Long studentId;
 }
 

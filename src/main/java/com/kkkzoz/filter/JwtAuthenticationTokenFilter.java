@@ -1,6 +1,6 @@
 package com.kkkzoz.filter;
 
-import com.kkkzoz.domain.User;
+import com.kkkzoz.domain.entity.User;
 import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.RedisCache;
 import io.jsonwebtoken.Claims;

@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class HomeController {
 
-
-
     @GetMapping
     public String sayHello(){
         log.info("Hello");

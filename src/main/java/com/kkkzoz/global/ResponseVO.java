@@ -19,6 +19,11 @@ public class ResponseVO<T> {
         this.msg = message;
         this.data = null;
     }
+    public ResponseVO(ResultCode resultCode) {
+        this.code = resultCode.getCode();
+        this.msg = resultCode.getMessage();
+        this.data = null;
+    }
 
     public ResponseVO(ResultCode resultCode, T data) {
         this.code = resultCode.getCode();

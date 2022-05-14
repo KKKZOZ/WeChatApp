@@ -27,38 +27,36 @@ public class QuestionController {
 
 
     @Tested
-    @GetMapping("/list")
-    @ApiOperation(value = "获取指定题目列表",notes = "参数是一个数组，其中每个元素包含题目的id和类别")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取指定题目列表", notes = "参数是一个数组，其中每个元素包含题目的id和类别")
     public List<QuestionDTO> getQuestionList(@RequestBody List<Map<String, String>> params) {
         return questionService.getQuestionList(params);
     }
 
     @Tested
-    @GetMapping("/batch")
+    @PostMapping("/batch")
     @ApiOperation(value = "批量获取题目")
     public List<QuestionDTO> getQuestionBatch(@RequestBody Map<String, String> params) {
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         int count = Integer.parseInt(params.get("count"));
-
         return questionService.getQuestionBatch(questionId, category, count);
     }
-
 
 
     @Tested
     @PostMapping("/mistake")
     @ApiOperation(value = "添加错题")
     public ResponseVO addMistakes(@RequestBody List<Mistake> mistakes) {
-         return questionService.addMistakes(mistakes);
+        return questionService.addMistakes(mistakes);
     }
 
     @Tested
     @GetMapping("/mistake")
     @ApiOperation(value = "获取错题列表")
-    public List<Long> getMistakes(@RequestBody Map<String, String> params) {
-        int userId = Integer.parseInt(params.get("userId"));
-        int category = Integer.parseInt(params.get("category"));
+    public List<Long> getMistakes(
+            @RequestParam("userId") int userId,
+            @RequestParam("category") int category) {
         return questionService.getMistakes(userId, category);
     }
 
@@ -69,7 +67,7 @@ public class QuestionController {
         int userId = Integer.parseInt(params.get("userId"));
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
-        return questionService.deleteMistake(userId,questionId,category);
+        return questionService.deleteMistake(userId, questionId, category);
     }
 
     @PostMapping("/favorite")
@@ -80,10 +78,19 @@ public class QuestionController {
 
     @GetMapping("/favorite")
     @ApiOperation(value = "获取收藏列表")
-    public List<Long> getFavorites(@RequestBody Map<String, String> params) {
-        int userId = Integer.parseInt(params.get("userId"));
-        int category = Integer.parseInt(params.get("category"));
+    public List<Long> getFavorites(
+            @RequestParam("userId") int userId,
+            @RequestParam("category") int category) {
         return questionService.getFavorites(userId, category);
+    }
+
+    @DeleteMapping("/favorite")
+    @ApiOperation(value = "删除收藏")
+    public ResponseVO deleteFavorite(@RequestBody Map<String, String> params) {
+        int userId = Integer.parseInt(params.get("userId"));
+        int questionId = Integer.parseInt(params.get("questionId"));
+        int category = Integer.parseInt(params.get("category"));
+        return questionService.deleteFavorite(userId, questionId, category);
     }
 
 
@@ -95,25 +102,21 @@ public class QuestionController {
 
     @GetMapping("/test")
     @ApiOperation(value = "获取试卷结果")
-    public Test getTestResult(@RequestBody Map<String, String> params) {
-        int userId = Integer.parseInt(params.get("userId"));
-        int testId = Integer.parseInt(params.get("testId"));
-        int category = Integer.parseInt(params.get("category"));
-        return questionService.getTestResult(userId,testId, category);
+    public Test getTestResult(
+            @RequestParam("userId") int userId,
+            @RequestParam("testId") int testId,
+            @RequestParam("category") int category) {
+        return questionService.getTestResult(userId, testId, category);
     }
 
     @PostMapping("/practice/status")
     @ApiOperation(value = "保存练习状态")
-    public ResponseVO addPracticeStatus(@RequestBody Map<String, String> params){
+    public ResponseVO addPracticeStatus(@RequestBody Map<String, String> params) {
         int userId = Integer.parseInt(params.get("userId"));
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
-        return questionService.addPracticeStatus(userId,questionId,category);
+        return questionService.addPracticeStatus(userId, questionId, category);
     }
-
-
-
-
 
 
 }

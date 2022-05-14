@@ -2,7 +2,6 @@ package com.kkkzoz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.kkkzoz.dto.QuestionDTO;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 

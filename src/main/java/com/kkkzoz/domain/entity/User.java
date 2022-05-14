@@ -1,4 +1,4 @@
-package com.kkkzoz.domain;
+package com.kkkzoz.domain.entity;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -28,7 +28,7 @@ public class User implements UserDetails {
     
     private String role;
     
-    private Integer stage;
+    private Integer category;
     
     private String gender;
     

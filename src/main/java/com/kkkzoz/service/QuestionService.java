@@ -32,7 +32,6 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private final FavoriteMapper favoriteMapper;
 
-
     private final TestRepository testRepository;
 
 
@@ -128,7 +127,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
     public Test getTestResult(int userId, int testId, int category) {
-       return  testRepository.findByUserIdAndTestIdAndCategory( userId, testId, category);
+        return testRepository.findByUserIdAndTestIdAndCategory(userId, testId, category);
     }
 
     public ResponseVO addPracticeStatus(int userId, int questionId, int category) {
@@ -144,6 +143,14 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
         List<Long> questionIds = favoriteMapper.selectList(queryWrapper).stream().map(Favorite::getQuestionId).collect(Collectors.toList());
         return questionIds;
+    }
+
+    public ResponseVO deleteFavorite(int userId, int questionId, int category) {
+        favoriteMapper.delete(new QueryWrapper<Favorite>()
+                .eq("user_id", userId)
+                .eq("question_id", questionId)
+                .eq("category", category));
+        return new ResponseVO<>(ResultCode.SUCCESS);
     }
 }//End of the class
 

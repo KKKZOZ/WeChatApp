@@ -45,10 +45,11 @@ create table app_user
     nickname     varchar(20),
     password     varchar(20),
     role         varchar(10),
-    stage        numeric(2, 0),
+    "category"        int,
     gender       varchar(10),
     phone_number numeric(11, 0),
-    primary key (id)
+    primary key (id),
+    unique (username)
 );
 
 create table mistake
@@ -77,4 +78,15 @@ create table favorite
 create table practice_status
 (
 
-)
+);
+
+
+
+create table class_group
+(
+    id  bigserial,
+    teacher_id bigint,
+    student_id bigint,
+    primary key (id),
+    unique (teacher_id, student_id)
+);

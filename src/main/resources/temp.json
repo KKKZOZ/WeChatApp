@@ -1,24 +1,42 @@
-{
-  "userId": 31,
-  "testId": 41,
-  "category": 1,
-  "score": 97,
-  "questions": [
-    {
-      "answer": 2,
-      "questionId": 62
-    },
-    {
-      "answer": 3,
-      "questionId": 66
-    },
-    {
-      "questionId": 88,
-      "answer": 1
-    },
-    {
-      "questionId": 9,
-      "answer": 2
-    }
-  ]
-}
+[
+  {
+    "solutionId": 1,
+    "teacherId": 1,
+    "localdate": "",
+    "weekday": 4,
+    "segments": [
+      {
+        "segmentId": 1,
+        "startTime": "700",
+        "endTime": "900",
+        "mode": 4,
+        "occupy": 0,
+        "practice": 30
+      },
+      {
+        "segmentId": 2,
+        "startTime": "9:00",
+        "end": "11:00",
+        "mode": 4,
+        "occupy": 0,
+        "practice": 30
+      }
+    ]
+  },
+  {
+    "solutionId": 2,
+    "teacherId": 1,
+    "localdate": "",
+    "weekday": 4,
+    "segments": [
+      {
+        "segmentId": 3,
+        "start": "7:00",
+        "end": "11:00",
+        "mode": 4,
+        "occupy": 0,
+        "practice": 60
+      }
+    ]
+  }
+]
