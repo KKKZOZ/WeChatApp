@@ -63,4 +63,12 @@
         where q.id = choice.question_id
           and choice.category = 4
     </select>
+    <select id="getQuestionOneCount" resultType="java.lang.Integer">
+        select count(*)
+        from question_1
+    </select>
+    <select id="getQuestionFourCount" resultType="java.lang.Integer">
+        select count(*)
+        from question_4
+    </select>
 </mapper>

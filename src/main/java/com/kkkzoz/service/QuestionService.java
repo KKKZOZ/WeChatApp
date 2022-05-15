@@ -152,5 +152,17 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
                 .eq("category", category));
         return new ResponseVO<>(ResultCode.SUCCESS);
     }
+
+    public int getQuestionCount(int category) {
+        if (category == 1) {
+            return questionDTOMapper.getQuestionOneCount();
+        }
+        if (category == 4) {
+            return questionDTOMapper.getQuestionFourCount();
+        }
+        return 0;
+    }
+
+
 }//End of the class
 

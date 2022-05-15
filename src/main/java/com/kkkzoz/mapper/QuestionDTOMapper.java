@@ -15,4 +15,8 @@ public interface QuestionDTOMapper extends BaseMapper<QuestionDTO> {
     public List<QuestionDTO> getQuestionOneDTOBatch(int questionId, int count);
 
     public List<QuestionDTO> getQuestionFourDTOBatch(int questionId, int count);
+
+    public int getQuestionOneCount();
+
+    public int getQuestionFourCount();
 }

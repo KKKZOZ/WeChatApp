@@ -17,7 +17,13 @@ public class TestController {
     @GetMapping("/1")
     public String getTest1() {
         log.info("getTest1");
-        return "test1";
+        for (int j=1;j<=10;j++){
+            for (int i=1;i<=Integer.MAX_VALUE-1;i++){
+
+            }
+        }
+
+        return this.toString();
     }
 
     @GetMapping("/2")
