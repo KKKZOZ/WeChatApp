@@ -22,6 +22,7 @@ public class MatchService {
 
 
     public ResponseVO saveMatchItem(HistoryMatchItem historyMatchItem) {
+        log.info("saveMatchItem: {}", historyMatchItem);
         historyMatchRepository
                 .save(historyMatchItem);
 

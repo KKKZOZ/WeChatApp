@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SolutionRepository
         extends MongoRepository<Solution, String> {
-    List<Solution> findByCategoryAndTeacherId(int category, int teacherId);
+    List<Solution> findByCategoryAndTeacherIdAndWeekOfYear(int category, int teacherId,int weekOfYear);
 
-    List<Solution> findByTeacherId(int teacherId);
+    List<Solution> findByTeacherIdAndWeekOfYear(int teacherId,int weekOfYear);
 }

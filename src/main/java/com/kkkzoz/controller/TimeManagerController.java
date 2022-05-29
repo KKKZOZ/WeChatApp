@@ -26,6 +26,7 @@ public class TimeManagerController {
     @PostMapping("/solution/design")
     @ApiOperation(value = "教练完成对时间的分配安排")
     public List<Solution> designSolution(@RequestBody Map<String, String> params) {
+        //TODO:
         Long teacherId = Long.parseLong(params.get("teacherId"));
         String localDate = params.get("localDate");
         int weekday = Integer.parseInt(params.get("weekday"));
@@ -47,14 +48,15 @@ public class TimeManagerController {
     @GetMapping("/solution")
     @ApiOperation(value = "请求刷新数据")
     public List<Solution> getSolutionList(
-            @RequestParam("userId") Long userId) {
+            @RequestParam("userId") Long userId,
+            @RequestParam("weekOfYear") int weekOfYear) {
         String role = userService.getUserRole(userId);
         if (role.equals("student")) {
             int category = userService.getCategory(userId);
             int teacherId = Math.toIntExact(userService.getTeacherId(userId));
-            return timeManagerService.getSolutionList(category, teacherId);
+            return timeManagerService.getSolutionList(category, teacherId,weekOfYear);
         } else {
-            return timeManagerService.getSolutionList(Math.toIntExact(userId));
+            return timeManagerService.getSolutionList(Math.toIntExact(userId),weekOfYear);
         }
 
     }

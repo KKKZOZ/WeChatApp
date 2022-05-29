@@ -55,18 +55,21 @@ public class MatchHandler {
 
     //互相发送userId,并发送第一道题
     private void initialize() {
+        log.info("互相发送userId: userAId:{},userBId:{}",userAId,userBId);
         webSocketServer
-                .send(userAId,new MessageVO<>(MessageVO.START,"{opponentId:"+userBId+"}"));
+                .send(userAId,new MessageVO<>(MessageVO.START,userBId));
         webSocketServer
-                .send(userBId,new MessageVO<>(MessageVO.START,"{opponentId:"+userAId+"}"));
+                .send(userBId,new MessageVO<>(MessageVO.START,userAId));
 
         //发送第一道题
+
         this.sendQuestion(userAId);
         this.sendQuestion(userBId);
     }
 
 
     private QuestionDTO getQuestion(int questionId,int category){
+        //TODO: 在questionIdList确定后，就把对应的questionDTO全部查到并保存下来，减少数据库访问
         if (category==1){
             return questionDTOMapper.getQuestionOneDTOById(questionId);
         }
@@ -81,9 +84,11 @@ public class MatchHandler {
         if (userAStatus && userBStatus){
             this.progress++;
             if (this.progress==this.size){
+                log.info("比赛结束");
                 //比赛结束
                 webSocketServer.send(userAId,new MessageVO(MessageVO.OVER,questionIdList));
                 webSocketServer.send(userBId,new MessageVO(MessageVO.OVER,questionIdList));
+                return;
             }
 
             this.sendQuestion(userAId);
@@ -97,6 +102,7 @@ public class MatchHandler {
 
 
     public void sendQuestion(int userId){
+        log.info("发送题目: userId:{}, progress:{}",userId,this.progress);
         webSocketServer
                 .send(userId, new MessageVO(
                         MessageVO.MATCH_CONTENT,

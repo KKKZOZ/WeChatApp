@@ -20,6 +20,8 @@ spring:
       port: 27017
       host: localhost
 
+
+
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   configuration:

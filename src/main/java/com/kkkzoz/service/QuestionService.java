@@ -5,18 +5,21 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkkzoz.domain.entity.Favorite;
 import com.kkkzoz.domain.entity.Mistake;
 import com.kkkzoz.domain.entity.Test;
+import com.kkkzoz.dto.MistakeDTO;
 import com.kkkzoz.dto.QuestionDTO;
+import com.kkkzoz.dto.StatusDTO;
 import com.kkkzoz.global.APIException;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.mapper.FavoriteMapper;
 import com.kkkzoz.mapper.MistakeMapper;
+import com.kkkzoz.mapper.PracticeStatusMapper;
 import com.kkkzoz.mapper.QuestionDTOMapper;
 import com.kkkzoz.repository.TestRepository;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,18 +27,39 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+
 public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private final QuestionDTOMapper questionDTOMapper;
+
     private final MistakeMapper mistakeMapper;
+
+    private final PracticeStatusMapper practiceStatusMapper;
+
+    private final UserService userService;
 
     private final FavoriteMapper favoriteMapper;
 
     private final TestRepository testRepository;
 
+    private int questionOneCount = 0;
 
-//    public List<QuestionDTO> getBatchQuestions(int id, String category) {
+    private int questionFourCount = 0;
+
+    public QuestionService(QuestionDTOMapper questionDTOMapper, MistakeMapper mistakeMapper,
+                           PracticeStatusMapper practiceStatusMapper,
+                           UserService userService,
+                           FavoriteMapper favoriteMapper,
+                           TestRepository testRepository) {
+        this.questionDTOMapper = questionDTOMapper;
+        this.mistakeMapper = mistakeMapper;
+        this.practiceStatusMapper = practiceStatusMapper;
+        this.userService = userService;
+        this.favoriteMapper = favoriteMapper;
+        this.testRepository = testRepository;
+    }
+
+    //    public List<QuestionDTO> getBatchQuestions(int id, String category) {
 //        List<QuestionDTO> batchQuestions = questionDTOMapper.getBatchQuestions(id, category);
 //        if (batchQuestions.size() == 0) {
 //            throw new APIException(ResultCode.QUESTIONS_GET_FAILED);
@@ -44,11 +68,13 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 //        }
 //    }
 
-    public void addMistake(Mistake mistake) {
-
-        mistakeMapper.insert(mistake);
-
+    @PostConstruct
+    public void init() {
+        //调用相应的mapper，查询出题库中题目的数量
+        questionOneCount = questionDTOMapper.getQuestionOneCount();
+        questionFourCount = questionDTOMapper.getQuestionFourCount();
     }
+
 
     public ResponseVO addMistakes(List<Mistake> mistakes) {
         for (Mistake mistake : mistakes) {
@@ -93,14 +119,19 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         return null;
     }
 
-    public List<Long> getMistakes(int userId, int category) {
+    public List<MistakeDTO> getMistakes(int userId, int category) {
         QueryWrapper<Mistake> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("question_id")
                 .eq("user_id", userId)
                 .eq("category", category);
 
-        List<Long> questionIds = this.list(queryWrapper).stream().map(Mistake::getQuestionId).collect(Collectors.toList());
-        return questionIds;
+        List<Mistake> mistakeList = this.list(queryWrapper);
+        List<MistakeDTO> mistakeDTOList = new ArrayList<>();
+        for (Mistake mistake : mistakeList) {
+            mistakeDTOList
+                    .add(new MistakeDTO(mistake.getQuestionId(), mistake.getWrongChoice()));
+        }
+        return mistakeDTOList;
     }
 
     public ResponseVO deleteMistake(int userId, int questionId, int category) {
@@ -164,5 +195,21 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
 
+    public StatusDTO getPracticeStatus(int userId) {
+        //先获取用户的category
+        int category = userService.getCategory((long) userId);
+        //获取题库总数
+        int questionCount = 0;
+        if (category == 1) {
+            questionCount = this.questionOneCount;
+        } else {
+            questionCount = this.questionFourCount;
+        }
+        //获取用户已经做过的题目数
+        int doneCount = practiceStatusMapper.getCountByUserId(userId);
+
+        return new StatusDTO(category, questionCount, doneCount);
+
+    }
 }//End of the class
 

@@ -77,7 +77,12 @@ create table favorite
 
 create table practice_status
 (
-
+    id  bigserial,
+    user_id bigint,
+    category int,
+    question_id bigint,
+    primary key (id),
+    UNIQUE (user_id, question_id,category)
 );
 
 

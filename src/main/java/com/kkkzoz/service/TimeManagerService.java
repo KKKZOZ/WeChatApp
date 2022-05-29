@@ -24,14 +24,15 @@ public class TimeManagerService {
     private static final int minMinutes = 30;
 
 
-    public List<Solution> getSolutionList(int category, int teacherId) {
+    //查询对应教练的solution
+    public List<Solution> getSolutionList(int category, int teacherId,int weekOfYear) {
         return solutionRepository
-                .findByCategoryAndTeacherId(category, teacherId);
+                .findByCategoryAndTeacherIdAndWeekOfYear(category, teacherId,weekOfYear);
     }
 
-    public List<Solution> getSolutionList(int teacherId) {
+    public List<Solution> getSolutionList(int teacherId,int weekOfYear) {
         return solutionRepository
-                .findByTeacherId(teacherId);
+                .findByTeacherIdAndWeekOfYear(teacherId,weekOfYear);
 
     }
 

@@ -3,7 +3,9 @@ package com.kkkzoz.controller;
 import com.kkkzoz.domain.entity.Favorite;
 import com.kkkzoz.domain.entity.Mistake;
 import com.kkkzoz.domain.entity.Test;
+import com.kkkzoz.dto.MistakeDTO;
 import com.kkkzoz.dto.QuestionDTO;
+import com.kkkzoz.dto.StatusDTO;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.Tested;
 import com.kkkzoz.service.QuestionService;
@@ -54,7 +56,7 @@ public class QuestionController {
     @Tested
     @GetMapping("/mistake")
     @ApiOperation(value = "获取错题列表")
-    public List<Long> getMistakes(
+    public List<MistakeDTO> getMistakes(
             @RequestParam("userId") int userId,
             @RequestParam("category") int category) {
         return questionService.getMistakes(userId, category);
@@ -116,6 +118,13 @@ public class QuestionController {
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         return questionService.addPracticeStatus(userId, questionId, category);
+    }
+
+    @GetMapping("/practice/status")
+    @ApiOperation(value = "获取练习状态")
+    public StatusDTO getPracticeStatus(
+            @RequestParam("userId") int userId) {
+        return questionService.getPracticeStatus(userId);
     }
 
 

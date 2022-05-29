@@ -110,16 +110,21 @@ public class WebSocketServer {
 
 
     public void send(int receiverId, MessageVO msg) {
-        WebSocketServer receiverServer = webSocketMap.get(receiverId);
-        try {
+        log.info("receiverId:{}",receiverId);
+        synchronized (this){
+            //TODO: 如果receiverServer不存在，向sender方发送异常，强制结束这次比赛
+            WebSocketServer receiverServer = webSocketMap.get(receiverId);
+            try {
 
-            String content = JSON.toJSONString(msg);
+                String content = JSON.toJSONString(msg);
 
-            receiverServer.session.getBasicRemote().sendText(content);
+                receiverServer.session.getBasicRemote().sendText(content);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
 

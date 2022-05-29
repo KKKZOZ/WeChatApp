@@ -32,6 +32,7 @@ public class MatchController {
     @PostMapping("/forwarding")
     @ApiOperation(value="对手之间转发消息")
     public ResponseVO forwarding(@RequestBody ForwardingVO forwarding){
+        log.info("MatchController forwarding");
       return  matchManager.forwardMessage(forwarding);
     }
 
@@ -40,6 +41,12 @@ public class MatchController {
     public ResponseVO startMatch(@RequestBody QueueItem queueItem){
         matchManager.addUserToQueue(queueItem);
         return new ResponseVO(ResultCode.SUCCESS);
+    }
+
+    @GetMapping("/over")
+    @ApiOperation(value="结束比赛时调用，方便后端整理资源")
+    public ResponseVO overMatch(@RequestParam("userId") int userId){
+       return matchManager.releaseResource(userId);
     }
 
     @PostMapping()

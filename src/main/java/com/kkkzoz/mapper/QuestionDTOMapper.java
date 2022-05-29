@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface QuestionDTOMapper extends BaseMapper<QuestionDTO> {
 
-    public QuestionDTO getQuestionOneDTOById(int id);
+    QuestionDTO getQuestionOneDTOById(int id);
 
-    public QuestionDTO getQuestionFourDTOById(int id);
+    QuestionDTO getQuestionFourDTOById(int id);
 
-    public List<QuestionDTO> getQuestionOneDTOBatch(int questionId, int count);
+    List<QuestionDTO> getQuestionOneDTOBatch(int questionId, int count);
 
-    public List<QuestionDTO> getQuestionFourDTOBatch(int questionId, int count);
+    List<QuestionDTO> getQuestionFourDTOBatch(int questionId, int count);
 
-    public int getQuestionOneCount();
+    int getQuestionOneCount();
 
-    public int getQuestionFourCount();
+    int getQuestionFourCount();
 }

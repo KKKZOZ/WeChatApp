@@ -24,6 +24,7 @@ public class MatchGenerator {
     }
 
     public  List<Integer> generateQuestionList(int category, int count) {
+        log.info("generateQuestionList: " + category + " " + count);
         Set<Integer> questionIdSet = new HashSet<>();
         int range = this.getRange(category);
         Random random = new Random();
@@ -34,7 +35,7 @@ public class MatchGenerator {
             }
             questionIdSet.add(randomNumber);
         }
-
+        log.info("questionIdSet: " + questionIdSet);
         return new ArrayList<Integer>(questionIdSet);
     }
 
