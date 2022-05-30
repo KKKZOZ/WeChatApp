@@ -32,7 +32,7 @@ public class User implements UserDetails {
     
     private String gender;
     
-    private Integer phoneNumber;
+    private Long phoneNumber;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

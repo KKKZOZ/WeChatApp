@@ -10,4 +10,11 @@
 
 
     </select>
+    <select id="findByUserIdAndQuestionIdAndCategory" resultType="com.kkkzoz.domain.entity.PracticeStatus">
+        SELECT *
+        FROM practice_status
+        WHERE user_id = #{userId}
+        AND question_id = #{questionId}
+        AND category = #{category}
+    </select>
 </mapper>

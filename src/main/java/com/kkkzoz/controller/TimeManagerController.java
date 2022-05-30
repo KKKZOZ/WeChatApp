@@ -53,7 +53,7 @@ public class TimeManagerController {
         String role = userService.getUserRole(userId);
         if (role.equals("student")) {
             int category = userService.getCategory(userId);
-            int teacherId = Math.toIntExact(userService.getTeacherId(userId));
+            int teacherId = Math.toIntExact(userService.getTeacherIdByUserId(userId));
             return timeManagerService.getSolutionList(category, teacherId,weekOfYear);
         } else {
             return timeManagerService.getSolutionList(Math.toIntExact(userId),weekOfYear);

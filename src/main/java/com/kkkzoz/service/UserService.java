@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.kkkzoz.global.ResultCode.*;
 @Slf4j
@@ -91,13 +92,26 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         return userMapper.selectOne(queryWrapper).getCategory();
     }
 
-    public Long getTeacherId(Long userId) {
-        QueryWrapper<Group> queryWrapper = new QueryWrapper<>();
-        queryWrapper
-                .select("teacher_id")
-                .eq("student_id", userId);
-        return groupMapper.selectOne(queryWrapper).getTeacherId();
+    public Long getTeacherIdByUserId(Long userId) {
+        //先判断这个Id是不是老师
+        //如果是的话，就直接返回
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("id", userId);
+        User user = userMapper.selectOne(wrapper);
+        if (Objects.equals(user.getRole(), "teacher")) {
+            log.info("userId:{} is teacher", userId);
+            return userId;
+        } else {
+            log.info("userId:{} is student", userId);
+            QueryWrapper<Group> queryWrapper = new QueryWrapper<>();
+            queryWrapper
+                    .select("teacher_id")
+                    .eq("student_id", userId);
+            return groupMapper.selectOne(queryWrapper).getTeacherId();
+        }
     }
+
+
 
     public String getUserRole(Long userId) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();

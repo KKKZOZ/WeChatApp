@@ -19,6 +19,11 @@ spring:
       database: wechatapp
       port: 27017
       host: localhost
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+
 
 
 

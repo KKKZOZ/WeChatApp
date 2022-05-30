@@ -114,6 +114,7 @@ public class QuestionController {
     @PostMapping("/practice/status")
     @ApiOperation(value = "保存练习状态")
     public ResponseVO addPracticeStatus(@RequestBody Map<String, String> params) {
+        log.info("add");
         int userId = Integer.parseInt(params.get("userId"));
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));

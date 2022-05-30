@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkkzoz.domain.entity.Favorite;
 import com.kkkzoz.domain.entity.Mistake;
+import com.kkkzoz.domain.entity.PracticeStatus;
 import com.kkkzoz.domain.entity.Test;
 import com.kkkzoz.dto.MistakeDTO;
 import com.kkkzoz.dto.QuestionDTO;
@@ -46,6 +47,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private int questionFourCount = 0;
 
+    //TODO:解决这里报错但实际可用的情况
     public QuestionService(QuestionDTOMapper questionDTOMapper, MistakeMapper mistakeMapper,
                            PracticeStatusMapper practiceStatusMapper,
                            UserService userService,
@@ -73,6 +75,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         //调用相应的mapper，查询出题库中题目的数量
         questionOneCount = questionDTOMapper.getQuestionOneCount();
         questionFourCount = questionDTOMapper.getQuestionFourCount();
+
     }
 
 
@@ -82,7 +85,6 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
                 this.save(mistake);
             } catch (Exception e) {
                 log.error(e.getMessage());
-
             }
 
         }
@@ -120,12 +122,14 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
     public List<MistakeDTO> getMistakes(int userId, int category) {
+        log.info("userId:{},category:{}", userId, category);
         QueryWrapper<Mistake> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("question_id")
+        queryWrapper
                 .eq("user_id", userId)
                 .eq("category", category);
 
-        List<Mistake> mistakeList = this.list(queryWrapper);
+        List<Mistake> mistakeList = mistakeMapper.selectList(queryWrapper);
+        log.info("mistakeList: {}", mistakeList);
         List<MistakeDTO> mistakeDTOList = new ArrayList<>();
         for (Mistake mistake : mistakeList) {
             mistakeDTOList
@@ -162,8 +166,14 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
     public ResponseVO addPracticeStatus(int userId, int questionId, int category) {
-        //TODO: 细节待讨论
-        return null;
+        //先判断是否存在，如果存在就不用管了
+        //TODO:错题和收藏可能也用同样的问题，记得改
+        PracticeStatus practiceStatus = practiceStatusMapper
+                .findByUserIdAndQuestionIdAndCategory(userId, questionId, category);
+        if (practiceStatus == null) {
+            practiceStatusMapper.insert(new PracticeStatus((long) userId, category, (long) questionId));
+        }
+        return new ResponseVO<>(ResultCode.SUCCESS);
     }
 
     public List<Long> getFavorites(int userId, int category) {
@@ -196,8 +206,11 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
 
     public StatusDTO getPracticeStatus(int userId) {
+//        log.info("questionOneCount: " + questionOneCount);
+//        log.info("questionFourCount: " + questionFourCount);
         //先获取用户的category
         int category = userService.getCategory((long) userId);
+//        log.info("category: " + category);
         //获取题库总数
         int questionCount = 0;
         if (category == 1) {
@@ -208,7 +221,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         //获取用户已经做过的题目数
         int doneCount = practiceStatusMapper.getCountByUserId(userId);
 
-        return new StatusDTO(category, questionCount, doneCount);
+        return new StatusDTO(category, doneCount, questionCount);
 
     }
 }//End of the class

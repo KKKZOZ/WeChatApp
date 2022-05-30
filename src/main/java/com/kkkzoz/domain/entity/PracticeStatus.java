@@ -17,5 +17,12 @@ public class PracticeStatus {
     private Integer category;
     
     private Long questionId;
+
+
+    public PracticeStatus(Long userId, Integer category, Long questionId) {
+        this.userId = userId;
+        this.category = category;
+        this.questionId = questionId;
+    }
 }
 
