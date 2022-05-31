@@ -12,14 +12,14 @@ public class PracticeStatus {
     
     private Long id;
     
-    private Long userId;
+    private String userId;
     
     private Integer category;
     
     private Long questionId;
 
 
-    public PracticeStatus(Long userId, Integer category, Long questionId) {
+    public PracticeStatus(String userId, Integer category, Long questionId) {
         this.userId = userId;
         this.category = category;
         this.questionId = questionId;

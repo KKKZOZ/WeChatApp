@@ -55,7 +55,7 @@ create table app_user
 create table mistake
 (
     id           bigserial,
-    user_id      bigint,
+    user_id      varchar(30),
     question_id  bigint,
     category     int,
     wrong_choice int,
@@ -67,7 +67,7 @@ create table mistake
 create table favorite
 (
     id           bigserial,
-    user_id      bigint,
+    user_id      varchar(30),
     question_id  bigint,
     category     int,
     primary key (id),
@@ -78,7 +78,7 @@ create table favorite
 create table practice_status
 (
     id  bigserial,
-    user_id bigint,
+    user_id varchar(30),
     category int,
     question_id bigint,
     primary key (id),
@@ -90,8 +90,8 @@ create table practice_status
 create table class_group
 (
     id  bigserial,
-    teacher_id bigint,
-    student_id bigint,
+    teacher_id varchar(30),
+    student_id varchar(30),
     primary key (id),
     unique (teacher_id, student_id)
 );

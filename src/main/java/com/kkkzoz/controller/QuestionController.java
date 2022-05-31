@@ -9,6 +9,7 @@ import com.kkkzoz.dto.StatusDTO;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.Tested;
 import com.kkkzoz.service.QuestionService;
+import com.kkkzoz.utils.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -57,8 +58,8 @@ public class QuestionController {
     @GetMapping("/mistake")
     @ApiOperation(value = "获取错题列表")
     public List<MistakeDTO> getMistakes(
-            @RequestParam("userId") int userId,
             @RequestParam("category") int category) {
+        String userId = SecurityUtil.getUserId();
         return questionService.getMistakes(userId, category);
     }
 
@@ -66,7 +67,7 @@ public class QuestionController {
     @DeleteMapping("/mistake")
     @ApiOperation(value = "删除错题")
     public ResponseVO deleteMistake(@RequestBody Map<String, String> params) {
-        int userId = Integer.parseInt(params.get("userId"));
+        String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         return questionService.deleteMistake(userId, questionId, category);
@@ -81,15 +82,15 @@ public class QuestionController {
     @GetMapping("/favorite")
     @ApiOperation(value = "获取收藏列表")
     public List<Long> getFavorites(
-            @RequestParam("userId") int userId,
             @RequestParam("category") int category) {
+        String userId = SecurityUtil.getUserId();
         return questionService.getFavorites(userId, category);
     }
 
     @DeleteMapping("/favorite")
     @ApiOperation(value = "删除收藏")
     public ResponseVO deleteFavorite(@RequestBody Map<String, String> params) {
-        int userId = Integer.parseInt(params.get("userId"));
+        String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         return questionService.deleteFavorite(userId, questionId, category);
@@ -105,17 +106,16 @@ public class QuestionController {
     @GetMapping("/test")
     @ApiOperation(value = "获取试卷结果")
     public Test getTestResult(
-            @RequestParam("userId") int userId,
             @RequestParam("testId") int testId,
             @RequestParam("category") int category) {
+        String userId = SecurityUtil.getUserId();
         return questionService.getTestResult(userId, testId, category);
     }
 
     @PostMapping("/practice/status")
     @ApiOperation(value = "保存练习状态")
     public ResponseVO addPracticeStatus(@RequestBody Map<String, String> params) {
-        log.info("add");
-        int userId = Integer.parseInt(params.get("userId"));
+        String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         return questionService.addPracticeStatus(userId, questionId, category);
@@ -123,8 +123,8 @@ public class QuestionController {
 
     @GetMapping("/practice/status")
     @ApiOperation(value = "获取练习状态")
-    public StatusDTO getPracticeStatus(
-            @RequestParam("userId") int userId) {
+    public StatusDTO getPracticeStatus() {
+        String userId = SecurityUtil.getUserId();
         return questionService.getPracticeStatus(userId);
     }
 

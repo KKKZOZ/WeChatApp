@@ -8,5 +8,5 @@ public interface TestRepository
     //复杂的可以使用MongoTemplate + Query解决
 
 
-    Test findByUserIdAndTestIdAndCategory(int userId, int testId, int category);
+    Test findByUserIdAndTestIdAndCategory(String userId, int testId, int category);
 }

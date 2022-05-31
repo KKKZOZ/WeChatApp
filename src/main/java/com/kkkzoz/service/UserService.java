@@ -68,12 +68,11 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
     }
 
     private String fetchFromServer(String code) throws IOException {
-        //TODO:等待调试
 //        log.info("fetchFromServer code:{}",code);
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String url = AUTH_URL + "?appid=" + APPID + "&secret="
                 + APP_SECRET + "&js_code=" + code + "&grant_type=authorization_code";
-        log.info("url: {}", url);
+//        log.info("url: {}", url);
         HttpGet get = new HttpGet(url);
         HttpResponse httpresponse = null;
         try {
@@ -84,7 +83,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         InputStream stream = httpresponse.getEntity().getContent();
         String result = new String(stream.readAllBytes());
         JSONObject object = (JSONObject) JSON.parse(result);
-        System.out.println(object.get("openid"));
+        log.info("openid:{}", object.get("openid"));
 
         return (String) object.get("openid");
     }
@@ -146,7 +145,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         return new ResponseVO(LOGOUT_SUCCESS, null);
     }
 
-    public int getCategory(Long userId) {
+    public int getCategory(String userId) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .select("category")
@@ -154,7 +153,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         return userMapper.selectOne(queryWrapper).getCategory();
     }
 
-    public Long getTeacherIdByUserId(Long userId) {
+    public String getTeacherIdByUserId(String userId) {
         //先判断这个Id是不是老师
         //如果是的话，就直接返回
         QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -174,7 +173,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
     }
 
 
-    public String getUserRole(Long userId) {
+    public String getUserRole(String userId) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .select("role")

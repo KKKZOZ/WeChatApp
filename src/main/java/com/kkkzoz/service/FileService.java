@@ -67,7 +67,7 @@ public class FileService {
         return convFile;
     }
 
-    public void uploadFile(Long userId, int category,MultipartFile multipartFile,String fileName) {
+    public void uploadFile(String userId, int category,MultipartFile multipartFile,String fileName) {
         File file = multipartToFile(multipartFile, fileName);
         String key = prefix + userId + "/" + category + "/" + fileName;
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file);
@@ -77,11 +77,11 @@ public class FileService {
 
     }
 
-    public List<DirDTO> getFileList(Long userId) {
+    public List<DirDTO> getFileList(String userId) {
         log.info("userId:{}", userId);
         //获取全部资料，即科一到科四
         //注意这里的userId可以为教练的也可以为学生的
-        Long teacherId = userService.getTeacherIdByUserId(userId);
+        String teacherId = userService.getTeacherIdByUserId(userId);
         List<DirDTO> dirDTOList = new ArrayList<>();
         dirDTOList.add(getDirDTO(teacherId, 1));
         dirDTOList.add(getDirDTO(teacherId, 2));
@@ -90,7 +90,7 @@ public class FileService {
         return dirDTOList;
     }
 
-    private DirDTO getDirDTO(Long userId, int category) {
+    private DirDTO getDirDTO(String userId, int category) {
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         listObjectsRequest.setBucketName(bucketName);
         listObjectsRequest.setPrefix(prefix + userId + "/" + category + "/");

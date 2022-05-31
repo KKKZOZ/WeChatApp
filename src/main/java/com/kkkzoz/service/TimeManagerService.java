@@ -25,12 +25,12 @@ public class TimeManagerService {
 
 
     //查询对应教练的solution
-    public List<Solution> getSolutionList(int category, int teacherId,int weekOfYear) {
+    public List<Solution> getSolutionList(int category, String teacherId,int weekOfYear) {
         return solutionRepository
                 .findByCategoryAndTeacherIdAndWeekOfYear(category, teacherId,weekOfYear);
     }
 
-    public List<Solution> getSolutionList(int teacherId,int weekOfYear) {
+    public List<Solution> getSolutionList(String teacherId,int weekOfYear) {
         return solutionRepository
                 .findByTeacherIdAndWeekOfYear(teacherId,weekOfYear);
 
@@ -41,7 +41,7 @@ public class TimeManagerService {
         return new ResponseVO(ResultCode.SUCCESS);
     }
 
-    public ResponseVO reserveSolution(Long studentId, String solutionId, int segmentId) {
+    public ResponseVO reserveSolution(String studentId, String solutionId, int segmentId) {
         Solution solution = solutionRepository.findById(solutionId).get();
 
         Segment segment = solution.getSegments().get(segmentId - 1);
@@ -49,7 +49,7 @@ public class TimeManagerService {
         //如果还能预约
         if (segment.getOccupy() < segment.getMode()) {
             segment.setOccupy(segment.getOccupy() + 1);
-            List<Long> members = segment.getMembers();
+            List<String> members = segment.getMembers();
             //如果未出现在预约名单中，才向名单中注册此人
             if (!members.contains(studentId)) {
                 members.add(studentId);
@@ -65,7 +65,7 @@ public class TimeManagerService {
         return null;
     }
 
-    public ResponseVO cancelReservedSolution(Long studentId, String solutionId, int segmentId) {
+    public ResponseVO cancelReservedSolution(String studentId, String solutionId, int segmentId) {
         Solution solution = solutionRepository.findById(solutionId).get();
 
         Segment segment = solution.getSegments().get(segmentId - 1);
@@ -87,7 +87,7 @@ public class TimeManagerService {
     }
 
     public List<Solution> designSolution(
-            Long teacherId,
+            String teacherId,
             String localDate,
             int weekday,
             int startTime,
@@ -105,7 +105,7 @@ public class TimeManagerService {
 
         for (int i = 1; i <= totalTime; i++) {
             Solution solution = new Solution();
-            solution.setTeacherId(Math.toIntExact(teacherId));
+            solution.setTeacherId(teacherId);
             solution.setCategory(category);
             solution.setLocalDate(localDate);
             solution.setWeekday(weekday);
@@ -123,7 +123,7 @@ public class TimeManagerService {
                 segment.setSegmentId(j);
                 segment.setMode(mode);
                 segment.setOccupy(0);
-                segment.setMembers(new ArrayList<Long>());
+                segment.setMembers(new ArrayList<String>());
                 segment.setPractice(averageTime);
                 segment.setStartTime(startTime + mode * averageTime * (j - 1));
                 segment.setEndTime(startTime + mode * averageTime * j);

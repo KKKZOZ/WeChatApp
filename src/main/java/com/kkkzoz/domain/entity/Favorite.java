@@ -12,7 +12,7 @@ public class Favorite {
 
     private Long id;
 
-    private Long userId;
+    private String userId;
 
     private Long questionId;
 

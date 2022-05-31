@@ -121,7 +121,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         return null;
     }
 
-    public List<MistakeDTO> getMistakes(int userId, int category) {
+    public List<MistakeDTO> getMistakes(String userId, int category) {
         log.info("userId:{},category:{}", userId, category);
         QueryWrapper<Mistake> queryWrapper = new QueryWrapper<>();
         queryWrapper
@@ -138,7 +138,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         return mistakeDTOList;
     }
 
-    public ResponseVO deleteMistake(int userId, int questionId, int category) {
+    public ResponseVO deleteMistake(String userId, int questionId, int category) {
         this.remove(new QueryWrapper<Mistake>()
                 .eq("user_id", userId)
                 .eq("question_id", questionId)
@@ -161,22 +161,22 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         return new ResponseVO<>(ResultCode.SUCCESS);
     }
 
-    public Test getTestResult(int userId, int testId, int category) {
+    public Test getTestResult(String userId, int testId, int category) {
         return testRepository.findByUserIdAndTestIdAndCategory(userId, testId, category);
     }
 
-    public ResponseVO addPracticeStatus(int userId, int questionId, int category) {
+    public ResponseVO addPracticeStatus(String userId, int questionId, int category) {
         //先判断是否存在，如果存在就不用管了
         //TODO:错题和收藏可能也用同样的问题，记得改
         PracticeStatus practiceStatus = practiceStatusMapper
                 .findByUserIdAndQuestionIdAndCategory(userId, questionId, category);
         if (practiceStatus == null) {
-            practiceStatusMapper.insert(new PracticeStatus((long) userId, category, (long) questionId));
+            practiceStatusMapper.insert(new PracticeStatus(userId, category, (long) questionId));
         }
         return new ResponseVO<>(ResultCode.SUCCESS);
     }
 
-    public List<Long> getFavorites(int userId, int category) {
+    public List<Long> getFavorites(String userId, int category) {
         QueryWrapper<Favorite> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("question_id")
                 .eq("user_id", userId)
@@ -186,7 +186,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         return questionIds;
     }
 
-    public ResponseVO deleteFavorite(int userId, int questionId, int category) {
+    public ResponseVO deleteFavorite(String userId, int questionId, int category) {
         favoriteMapper.delete(new QueryWrapper<Favorite>()
                 .eq("user_id", userId)
                 .eq("question_id", questionId)
@@ -205,11 +205,11 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
 
-    public StatusDTO getPracticeStatus(int userId) {
+    public StatusDTO getPracticeStatus(String userId) {
 //        log.info("questionOneCount: " + questionOneCount);
 //        log.info("questionFourCount: " + questionFourCount);
         //先获取用户的category
-        int category = userService.getCategory((long) userId);
+        int category = userService.getCategory(userId);
 //        log.info("category: " + category);
         //获取题库总数
         int questionCount = 0;

@@ -13,7 +13,7 @@ import java.util.List;
 public class Test {
     @Id
     private String id;
-    private int userId;
+    private String userId;
     private int testId;
     private int category;
     private int score;

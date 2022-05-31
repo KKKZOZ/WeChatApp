@@ -17,7 +17,7 @@ public class Segment {
 
     private int occupy;
 
-    private List<Long> members;
+    private List<String> members;
 
     private int practice;
 }

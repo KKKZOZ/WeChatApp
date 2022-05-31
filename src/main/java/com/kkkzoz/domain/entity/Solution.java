@@ -14,7 +14,7 @@ public class Solution {
     @Id
     private String solutionId;
 
-    private int teacherId;
+    private String teacherId;
 
     private int category;
 

@@ -14,8 +14,8 @@ public class Group {
     
     private Long id;
     
-    private Long teacherId;
+    private String teacherId;
     
-    private Long studentId;
+    private String studentId;
 }
 
