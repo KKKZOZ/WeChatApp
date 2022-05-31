@@ -18,7 +18,7 @@ import java.util.Collection;
 @TableName("app_user")
 public class User implements UserDetails {
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private String id;
     
     private String username;
     
@@ -33,6 +33,10 @@ public class User implements UserDetails {
     private String gender;
     
     private Long phoneNumber;
+
+    public User(String id) {
+        this.id = id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

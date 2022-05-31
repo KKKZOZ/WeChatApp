@@ -37,8 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest()
-//                .authenticated()
-                .anonymous();
+                .authenticated();
 
         http.cors();
 

@@ -28,6 +28,7 @@ import java.util.List;
 public class FileService {
 
     private static final String secretId = "AKIDQilW1GEvLVO0MRFm1zg6F7i25qMcbJku";
+    //TODO:记得加密
     private static final String secretKey = "ua2D7l8E3cttd5GAoBG4cQxDCuLVNzKN";
     private static final String bucketName = "zhw-1312170899";
     private static final String prefix = "file/";
@@ -56,7 +57,7 @@ public class FileService {
         }
     }
 
-    public  static File multipartToFile(MultipartFile multipart, String fileName) {
+    public static File multipartToFile(MultipartFile multipart, String fileName) {
         File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileName);
         try {
             multipart.transferTo(convFile);

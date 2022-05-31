@@ -1,0 +1,10 @@
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (3, 'zh', '鱼的白日梦', 'password', 'teacher', null, 'male', 18090000531);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (7, 'hyx', '空街细诉', 'password', 'student', 2, 'male', 13135464687);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (5, 'hys', '声秋雨嫣', 'password', 'student', 3, 'male', 17301421556);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (2, 'kelicopter', 'Kelicopter', 'password', 'teacher', null, 'male', 13446468748);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (8, 'cgf', 'iPhone', 'password', 'student', 2, 'male', 13646787684);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (6, 'zhw', 'ac超而烈', 'password', 'student', 3, 'male', 15589744562);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (4, 'zyx', '遥的青花鱼', 'password', 'student', 2, 'female', 19946448131);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (9, 'wjk', '夜雨声烦', 'password', 'student', 3, 'male', 17413146646);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (10, 'xiehao', '公子世无双', 'password', 'student', 3, 'male', 15346461319);
+INSERT INTO public.app_user (id, username, nickname, password, role, category, gender, phone_number) VALUES (1, 'kkkzoz', 'KKKZOZ', 'password', 'teacher', 1, 'male', 13254648786);

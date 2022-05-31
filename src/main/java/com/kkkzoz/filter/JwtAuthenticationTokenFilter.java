@@ -47,16 +47,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
         //解析token
-        String userid;
+        String openId;
         try {
             Claims claims = JwtUtil.parseJWT(token);
-            userid = claims.getSubject();
+            openId = claims.getSubject();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("token非法");
         }
         //从redis中获取用户信息
-        String redisKey = "login:" + userid;
+        String redisKey = "login:" + openId;
         User loginUser = redisCache.getCacheObject(redisKey);//方法放行
         if(Objects.isNull(loginUser)){
             throw new RuntimeException("用户不存在");

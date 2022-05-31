@@ -1,5 +1,7 @@
 package com.kkkzoz.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkkzoz.domain.entity.Group;
@@ -9,8 +11,14 @@ import com.kkkzoz.mapper.GroupMapper;
 import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.RedisCache;
+import com.kkkzoz.vo.OpenIdVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,11 +28,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.kkkzoz.global.ResultCode.*;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -32,8 +47,17 @@ import static com.kkkzoz.global.ResultCode.*;
 //Spring Security默认优先使用自己实现的UserDetailsService
 public class UserService extends ServiceImpl<UserMapper, User> implements UserDetailsService {
 
-    private final UserMapper userMapper;
 
+    private static final String APPID = "wx6bb8dfbe50ce48b5";
+
+    //TODO:加密
+    private static final String APP_SECRET = "c47575178717fd88676203e13c3f6bd3";
+
+    private static final String AUTH_URL = "https://api.weixin.qq.com/sns/jscode2session";
+
+
+    //https://api.weixin.qq.com/sns/jscode2session
+    private final UserMapper userMapper;
     private final GroupMapper groupMapper;
     private final AuthenticationManager authenticationManager;
     private final RedisCache redisCache;
@@ -43,45 +67,83 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         return userMapper.findByUsername(username);
     }
 
+    private String fetchFromServer(String code) throws IOException {
+        //TODO:等待调试
+//        log.info("fetchFromServer code:{}",code);
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        String url = AUTH_URL + "?appid=" + APPID + "&secret="
+                + APP_SECRET + "&js_code=" + code + "&grant_type=authorization_code";
+        log.info("url: {}", url);
+        HttpGet get = new HttpGet(url);
+        HttpResponse httpresponse = null;
+        try {
+            httpresponse = httpclient.execute(get);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InputStream stream = httpresponse.getEntity().getContent();
+        String result = new String(stream.readAllBytes());
+        JSONObject object = (JSONObject) JSON.parse(result);
+        System.out.println(object.get("openid"));
 
-    public ResponseVO login(User user) {
-        //获取AuthenticationManager authenticate 进行认证
+        return (String) object.get("openid");
+    }
 
-        UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+    //整个流程(第一次登录，JWT没有启动)
+    //1. 获取code
+    //2. 获取openid
+    //3. 查看是否存在此用户
+    //4. 如果存在，就返回一个JWT
+    //5. 如果不存在，就新建一个用户，返回一个JWT
 
-        Authentication authenticate = authenticationManager.authenticate(token);
 
-        if (!authenticate.isAuthenticated()) {
-            return new ResponseVO(LOGIN_FAILED,null);
+
+    public ResponseVO login(String code) {
+        String openId = null;
+        try {
+           openId = fetchFromServer(code);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        User user = userMapper.selectById(openId);
+
+        if (Objects.isNull(user)) {
+            //如果为空，则新建一个用户,其他信息为空，等待前端调用其他接口来填写
+            user = new User(openId);
+            userMapper.insert(user);
+        }else {
+            //如果不为空，则直接改变SecurityContextHolder中的用户
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(user, null,null);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
 
-
-        //如果认证通过，使用userid生成一个jwt,jwt 存入ResponseResult中并返回
-        User loginUser = (User)authenticate.getPrincipal();
-        String userid = loginUser.getId().toString();
-        String jwt = JwtUtil.createJWT(userid);
+        //使用openId生成一个jwt,jwt 存入ResponseResult中并返回
+        ;
+        String jwt = JwtUtil.createJWT(openId);
         Map<String, String> map = new HashMap<>();
         map.put("token", jwt);
 
         //把完整的用户信息存入redis, userid作为key
-        redisCache.setCacheObject("login:"+userid, loginUser);
-        log.info("login userid:{}",userid);
+        redisCache.setCacheObject("login:" + openId, user);
+        log.info("login userid:{}", openId);
         return new ResponseVO(LOGIN_SUCCESS, map);
     }
 
 
     public ResponseVO logout() {
+        //TODO
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder
                 .getContext().getAuthentication();
 
-        User loginUser = (User)authentication.getPrincipal();
+        User loginUser = (User) authentication.getPrincipal();
         String userid = loginUser.getId().toString();
 
         //删除redis中的值
-        redisCache.deleteObject("login:"+userid);
-        log.info("logout userid:{}",userid);
-        return new ResponseVO(LOGOUT_SUCCESS,null);
+        redisCache.deleteObject("login:" + userid);
+        log.info("logout userid:{}", userid);
+        return new ResponseVO(LOGOUT_SUCCESS, null);
     }
 
     public int getCategory(Long userId) {
@@ -110,7 +172,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
             return groupMapper.selectOne(queryWrapper).getTeacherId();
         }
     }
-
 
 
     public String getUserRole(Long userId) {

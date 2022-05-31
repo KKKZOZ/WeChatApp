@@ -40,7 +40,7 @@ create table choice
 
 create table app_user
 (
-    id           bigserial,
+    id           varchar(30),
     username     varchar(20),
     nickname     varchar(20),
     password     varchar(20),

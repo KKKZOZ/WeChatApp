@@ -16,8 +16,8 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/login")
-    public ResponseVO login(@RequestParam User user){
-        return userService.login(user);
+    public ResponseVO login(@RequestParam String code){
+        return userService.login(code);
     }
 
     @GetMapping("/logout")
