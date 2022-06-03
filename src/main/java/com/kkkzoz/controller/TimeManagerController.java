@@ -29,18 +29,25 @@ public class TimeManagerController {
     public List<Solution> designSolution(@RequestBody Map<String, String> params) {
         String userId = SecurityUtil.getUserId();
         String localDate = params.get("localDate");
+        String licenseNumber = params.get("licenseNumber");
+        String teacherName = params.get("teacherName");
         int weekday = Integer.parseInt(params.get("weekday"));
         int startTime = Integer.parseInt(params.get("startTime"));
         int endTime = Integer.parseInt(params.get("endTime"));
         int mode = Integer.parseInt(params.get("mode"));
         int category = Integer.parseInt(params.get("category"));
-        return timeManagerService.designSolution(userId, localDate, weekday, startTime, endTime, mode, category);
+        return timeManagerService
+                .designSolution(userId, localDate,
+                        licenseNumber, teacherName,
+                        weekday, startTime,
+                        endTime, mode, category);
     }
 
 
     @PostMapping("/solution")
     @ApiOperation(value = "教练段选择可使用的时间段分配方案后保存到后端")
     public ResponseVO saveSolution(@RequestBody Solution solution) {
+        log.info("saveSolution: {}", solution);
         return timeManagerService.saveSolution(solution);
     }
 
@@ -54,9 +61,9 @@ public class TimeManagerController {
         if (role.equals("student")) {
             int category = userService.getCategory(userId);
             String teacherId = userService.getTeacherIdByUserId(userId);
-            return timeManagerService.getSolutionList(category, teacherId,weekOfYear);
+            return timeManagerService.getSolutionList(category, teacherId, weekOfYear);
         } else {
-            return timeManagerService.getSolutionList(userId,weekOfYear);
+            return timeManagerService.getSolutionList(userId, weekOfYear);
         }
 
     }

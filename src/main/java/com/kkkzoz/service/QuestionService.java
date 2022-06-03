@@ -79,9 +79,10 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
 
-    public ResponseVO addMistakes(List<Mistake> mistakes) {
+    public ResponseVO addMistakes(String userId,List<Mistake> mistakes) {
         for (Mistake mistake : mistakes) {
             try {
+                mistake.setUserId(userId);
                 this.save(mistake);
             } catch (Exception e) {
                 log.error(e.getMessage());
@@ -208,8 +209,19 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     public StatusDTO getPracticeStatus(String userId) {
 //        log.info("questionOneCount: " + questionOneCount);
 //        log.info("questionFourCount: " + questionFourCount);
+
         //先获取用户的category
         int category = userService.getCategory(userId);
+
+        String role = userService.getUserRole(userId);
+        if (role.equals("teacher")){
+            category=1;
+        }
+
+
+
+
+
 //        log.info("category: " + category);
         //获取题库总数
         int questionCount = 0;

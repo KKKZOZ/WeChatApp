@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -22,16 +24,22 @@ public class User implements UserDetails {
     
     private String username;
     
-    private String nickname;
-    
+    private String name;
+
     private String password;
-    
+
+    private String avatarUrl;
+
+    private Integer yearsOfTeaching;
+
+    private String schoolName;
+
+    private LocalDate registerDate;
+
     private String role;
     
     private Integer category;
-    
-    private String gender;
-    
+
     private Long phoneNumber;
 
     public User(String id) {

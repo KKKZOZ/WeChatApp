@@ -42,11 +42,14 @@ create table app_user
 (
     id           varchar(30),
     username     varchar(20),
-    nickname     varchar(20),
+    name     varchar(20),
     password     varchar(20),
     role         varchar(10),
     "category"        int,
-    gender       varchar(10),
+    avatar_url  varchar(200),
+    years_of_teaching numeric(2, 0),
+    school_name varchar(100),
+    register_date date,
     phone_number numeric(11, 0),
     primary key (id),
     unique (username)

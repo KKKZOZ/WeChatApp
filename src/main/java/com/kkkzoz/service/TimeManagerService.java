@@ -3,13 +3,16 @@ package com.kkkzoz.service;
 
 import com.kkkzoz.domain.entity.Segment;
 import com.kkkzoz.domain.entity.Solution;
+import com.kkkzoz.domain.entity.User;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
+import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.repository.SolutionRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,18 +24,22 @@ public class TimeManagerService {
 
     private final SolutionRepository solutionRepository;
 
+    private final UserMapper userMapper;
+
     private static final int minMinutes = 30;
+
+    private static final int maxMinutes = 120;
 
 
     //查询对应教练的solution
-    public List<Solution> getSolutionList(int category, String teacherId,int weekOfYear) {
+    public List<Solution> getSolutionList(int category, String teacherId, int weekOfYear) {
         return solutionRepository
-                .findByCategoryAndTeacherIdAndWeekOfYear(category, teacherId,weekOfYear);
+                .findByCategoryAndTeacherIdAndWeekOfYear(category, teacherId, weekOfYear);
     }
 
-    public List<Solution> getSolutionList(String teacherId,int weekOfYear) {
+    public List<Solution> getSolutionList(String teacherId, int weekOfYear) {
         return solutionRepository
-                .findByTeacherIdAndWeekOfYear(teacherId,weekOfYear);
+                .findByTeacherIdAndWeekOfYear(teacherId, weekOfYear);
 
     }
 
@@ -44,6 +51,9 @@ public class TimeManagerService {
     public ResponseVO reserveSolution(String studentId, String solutionId, int segmentId) {
         Solution solution = solutionRepository.findById(solutionId).get();
 
+        User user = userMapper.selectById(studentId);
+        String studentName = user.getName();
+
         Segment segment = solution.getSegments().get(segmentId - 1);
         log.info("segment: {}", segment);
         //如果还能预约
@@ -51,8 +61,8 @@ public class TimeManagerService {
             segment.setOccupy(segment.getOccupy() + 1);
             List<String> members = segment.getMembers();
             //如果未出现在预约名单中，才向名单中注册此人
-            if (!members.contains(studentId)) {
-                members.add(studentId);
+            if (!members.contains(studentName)) {
+                members.add(studentName);
             } else {
                 return new ResponseVO(ResultCode.RESERVE_ERROR);
             }
@@ -89,6 +99,8 @@ public class TimeManagerService {
     public List<Solution> designSolution(
             String teacherId,
             String localDate,
+            String licenseNumber,
+            String teacherName,
             int weekday,
             int startTime,
             int endTime,
@@ -107,12 +119,22 @@ public class TimeManagerService {
             Solution solution = new Solution();
             solution.setTeacherId(teacherId);
             solution.setCategory(category);
-            solution.setLocalDate(localDate);
+            log.info("localDate: {}", localDate);
+            solution.setLocalDate(LocalDate.parse(localDate));
+            solution.setTeacherName(teacherName);
             solution.setWeekday(weekday);
+            solution.setLicenseNumber(licenseNumber);
             solution.setSegments(new ArrayList<Segment>());
 
-
+            if (totalTime % (mode * i) != 0) {
+                continue;
+            }
             int averageTime = totalTime / mode / i;
+
+            if (averageTime > maxMinutes) {
+                continue;
+            }
+
             //结束条件
             if (averageTime < minMinutes) {
                 break;

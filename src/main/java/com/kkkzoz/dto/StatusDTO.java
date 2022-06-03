@@ -14,5 +14,4 @@ public class StatusDTO {
     private int doneCount;
     private int questionCount;
 
-
 }

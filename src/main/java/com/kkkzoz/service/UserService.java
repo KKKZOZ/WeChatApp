@@ -5,19 +5,24 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkkzoz.domain.entity.Group;
+import com.kkkzoz.domain.entity.Test;
 import com.kkkzoz.domain.entity.User;
+import com.kkkzoz.dto.UserDTO;
 import com.kkkzoz.global.ResponseVO;
+import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.mapper.GroupMapper;
+import com.kkkzoz.mapper.PracticeStatusMapper;
 import com.kkkzoz.mapper.UserMapper;
+import com.kkkzoz.repository.TestRepository;
 import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.RedisCache;
 import com.kkkzoz.vo.OpenIdVO;
+import com.kkkzoz.vo.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,13 +35,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 import static com.kkkzoz.global.ResultCode.*;
 
@@ -60,6 +63,10 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
     private final UserMapper userMapper;
     private final GroupMapper groupMapper;
     private final AuthenticationManager authenticationManager;
+
+    private final PracticeStatusMapper practiceStatusMapper;
+
+    private final TestRepository testRepository;
     private final RedisCache redisCache;
 
 
@@ -98,6 +105,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
 
 
     public ResponseVO login(String code) {
+        boolean isNewUser = false;
         String openId = null;
         try {
            openId = fetchFromServer(code);
@@ -108,6 +116,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
 
         if (Objects.isNull(user)) {
             //如果为空，则新建一个用户,其他信息为空，等待前端调用其他接口来填写
+            isNewUser = true;
             user = new User(openId);
             userMapper.insert(user);
         }else {
@@ -123,6 +132,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         String jwt = JwtUtil.createJWT(openId);
         Map<String, String> map = new HashMap<>();
         map.put("token", jwt);
+        map.put("isNewUser", String.valueOf(isNewUser));
 
         //把完整的用户信息存入redis, userid作为key
         redisCache.setCacheObject("login:" + openId, user);
@@ -179,5 +189,62 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
                 .select("role")
                 .eq("id", userId);
         return userMapper.selectOne(queryWrapper).getRole();
+    }
+
+    public ResponseVO setUserInfo(String userId, UserVO userVO) {
+        User user = userMapper.selectById(userId);
+
+        user.setUsername(userVO.getUsername());
+        user.setName(userVO.getName());
+        user.setRole(userVO.getRole());
+        user.setCategory(userVO.getCategory());
+        user.setAvatarUrl(userVO.getAvatarUrl());
+        user.setYearsOfTeaching(userVO.getYearsOfTeaching());
+        user.setSchoolName(userVO.getSchoolName());
+        user.setPhoneNumber(userVO.getPhoneNumber());
+
+        //添加注册日期
+        user.setRegisterDate(LocalDate.now());
+
+        userMapper.updateById(user);
+        return new ResponseVO(SUCCESS);
+    }
+
+    public UserDTO getUserInfo(String userId) {
+        User user = userMapper.selectById(userId);
+        int doneCount = practiceStatusMapper.getCountByUserId(userId);
+        //calculate number of days between registerDate and now
+        int numberOfDays = (int) (LocalDate.now().toEpochDay() - user.getRegisterDate().toEpochDay());
+        List<Test> testList = testRepository.findAllByUserId(userId);
+        List<Integer> scoreList = new ArrayList<>();
+        for(Test test: testList) {
+            scoreList.add(test.getScore());
+        }
+        //TODO: check?
+        int averageScore = (int) scoreList.stream().mapToInt(Integer::intValue).average().orElse(0);
+
+        UserDTO userDTO = new UserDTO(
+                user.getUsername(),
+                user.getName(),
+                user.getRole(),
+                user.getCategory(),
+                user.getAvatarUrl(),
+                user.getYearsOfTeaching(),
+                user.getSchoolName(),
+                user.getPhoneNumber(),
+                doneCount,
+                numberOfDays,
+                averageScore
+        );
+
+        return userDTO;
+    }
+
+    public ResponseVO setUserBasicInfo(String userId,String userName, String avatarUrl) {
+        User user = userMapper.selectById(userId);
+        user.setUsername(userName);
+        user.setAvatarUrl(avatarUrl);
+        userMapper.updateById(user);
+        return new ResponseVO(SUCCESS);
     }
 }

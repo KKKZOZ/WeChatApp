@@ -1,0 +1,118 @@
+[
+  {
+    "_id": {"$oid": "629041689e16b528c14ea0da"},
+    "_class": "com.kkkzoz.domain.entity.Solution",
+    "category": 2,
+    "localDate": "2022-05-27",
+    "segments": [
+      {
+        "segmentId": 1,
+        "startTime": 420,
+        "endTime": 540,
+        "mode": 4,
+        "occupy": 2,
+        "members": [1, 8],
+        "practice": 30
+      },
+      {
+        "segmentId": 2,
+        "startTime": 540,
+        "endTime": 660,
+        "mode": 4,
+        "occupy": 0,
+        "members": [],
+        "practice": 30
+      }
+    ],
+    "teacherId": 2,
+    "weekOfYear": 21,
+    "weekday": 5
+  },
+  {
+    "_id": {"$oid": "629041fa9e16b528c14ea0db"},
+    "_class": "com.kkkzoz.domain.entity.Solution",
+    "category": 3,
+    "localDate": "2022-05-27",
+    "segments": [
+      {
+        "segmentId": 1,
+        "startTime": 840,
+        "endTime": 960,
+        "mode": 4,
+        "occupy": 1,
+        "members": [1],
+        "practice": 30
+      },
+      {
+        "segmentId": 2,
+        "startTime": 960,
+        "endTime": 1080,
+        "mode": 4,
+        "occupy": 2,
+        "members": [9, 10],
+        "practice": 30
+      }
+    ],
+    "teacherId": 2,
+    "weekOfYear": 21,
+    "weekday": 5
+  },
+  {
+    "_id": {"$oid": "629042459e16b528c14ea0dc"},
+    "_class": "com.kkkzoz.domain.entity.Solution",
+    "category": 2,
+    "localDate": "2022-05-28",
+    "segments": [
+      {
+        "segmentId": 1,
+        "startTime": 420,
+        "endTime": 540,
+        "mode": 4,
+        "occupy": 0,
+        "members": [],
+        "practice": 30
+      },
+      {
+        "segmentId": 2,
+        "startTime": 540,
+        "endTime": 660,
+        "mode": 4,
+        "occupy": 2,
+        "members": [4, 7],
+        "practice": 30
+      }
+    ],
+    "teacherId": 3,
+    "weekOfYear": 21,
+    "weekday": 6
+  },
+  {
+    "_id": {"$oid": "629042d09e16b528c14ea0dd"},
+    "_class": "com.kkkzoz.domain.entity.Solution",
+    "category": 3,
+    "localDate": "2022-05-28",
+    "segments": [
+      {
+        "segmentId": 1,
+        "startTime": 840,
+        "endTime": 960,
+        "mode": 4,
+        "occupy": 2,
+        "members": [5, 6],
+        "practice": 30
+      },
+      {
+        "segmentId": 2,
+        "startTime": 960,
+        "endTime": 1080,
+        "mode": 4,
+        "occupy": 0,
+        "members": [],
+        "practice": 30
+      }
+    ],
+    "teacherId": 3,
+    "weekOfYear": 21,
+    "weekday": 6
+  }
+]

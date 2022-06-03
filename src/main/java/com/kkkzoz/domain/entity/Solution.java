@@ -16,9 +16,14 @@ public class Solution {
 
     private String teacherId;
 
+    private String teacherName;
+
     private int category;
 
-    private String localDate;
+    private LocalDate localDate;
+
+    private String licenseNumber;
+
 
     private int weekday;
 

@@ -5,6 +5,7 @@ import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.RedisCache;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.Objects;
  *    4. 从redis中获取用户信息
  *    5. 存入SecurityContextHolder中
  * */
+@Slf4j
 @Component
 @AllArgsConstructor
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -47,10 +49,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
         //解析token
+        log.info("token is found");
         String openId;
         try {
             Claims claims = JwtUtil.parseJWT(token);
             openId = claims.getSubject();
+            log.info("openId:{}", openId);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("token非法");

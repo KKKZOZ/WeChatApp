@@ -51,7 +51,8 @@ public class QuestionController {
     @PostMapping("/mistake")
     @ApiOperation(value = "添加错题")
     public ResponseVO addMistakes(@RequestBody List<Mistake> mistakes) {
-        return questionService.addMistakes(mistakes);
+        String userId = SecurityUtil.getUserId();
+        return questionService.addMistakes(userId,mistakes);
     }
 
     @Tested
