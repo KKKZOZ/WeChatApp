@@ -40,6 +40,8 @@ public class User implements UserDetails {
     
     private Integer category;
 
+    private int invitationCode;
+
     private Long phoneNumber;
 
     public User(String id) {

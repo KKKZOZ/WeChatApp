@@ -9,14 +9,14 @@ import com.kkkzoz.domain.entity.Test;
 import com.kkkzoz.domain.entity.User;
 import com.kkkzoz.dto.UserDTO;
 import com.kkkzoz.global.ResponseVO;
-import com.kkkzoz.global.ResultCode;
+
 import com.kkkzoz.mapper.GroupMapper;
 import com.kkkzoz.mapper.PracticeStatusMapper;
 import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.repository.TestRepository;
 import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.RedisCache;
-import com.kkkzoz.vo.OpenIdVO;
+
 import com.kkkzoz.vo.UserVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -202,6 +202,22 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         user.setYearsOfTeaching(userVO.getYearsOfTeaching());
         user.setSchoolName(userVO.getSchoolName());
         user.setPhoneNumber(userVO.getPhoneNumber());
+        //如果是老师，要生成一个邀请码，且保证不重复
+        if (userVO.getRole().equals("teacher")) {
+//            invitationCode
+            Random random = new Random();
+            int invitationCode=-1;
+            while (true) {
+                invitationCode=random.nextInt(1000,10000);
+                //查找这个code是否存在过
+                QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("invitation_code", invitationCode);
+                if (userMapper.selectOne(queryWrapper)==null) {
+                    break;
+                }
+            }
+            user.setInvitationCode(invitationCode);
+        }
 
         //添加注册日期
         user.setRegisterDate(LocalDate.now());
@@ -245,6 +261,23 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         user.setUsername(userName);
         user.setAvatarUrl(avatarUrl);
         userMapper.updateById(user);
+        return new ResponseVO(SUCCESS);
+    }
+
+    public int getInvitationCode(String userId) {
+        return userMapper.selectById(userId).getInvitationCode();
+
+    }
+
+    public ResponseVO joinGroup(String userId, int code) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("invitation_code", code);
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            return new ResponseVO(INVITATION_CODE_NOT_EXIST);
+        }
+        String teacherId=user.getId();
+        groupMapper.insert(new Group(teacherId,userId));
         return new ResponseVO(SUCCESS);
     }
 }

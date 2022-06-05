@@ -17,6 +17,7 @@ public enum ResultCode {
     RESERVE_FAILED(4001,"预约人数已满"),
     RESERVE_ERROR(4002,"你已经预约过这个时间段了"),
     RESERVE_CANCEL_ERROR(4003, "你没有预约过这段时间"),
+    INVITATION_CODE_NOT_EXIST(6001,"邀请码不存在"),
 
     ERROR(5000, "未知错误");
 

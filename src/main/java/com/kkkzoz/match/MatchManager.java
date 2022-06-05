@@ -26,12 +26,14 @@ public class MatchManager {
 
     private final WebSocketServer webSocketServer;
 
+
+
     private static final int MAX_MATCH_SIZE = 5;
 
     private int count = 0;
 
 //    Key:userId, Value:相应handler在list中的index
-    private Map<Integer,Integer> correspondingMap;
+    private Map<String,Integer> correspondingMap;
 
     private List<MatchHandler> handlers;
 
@@ -96,8 +98,8 @@ public class MatchManager {
     public ResponseVO forwardMessage(ForwardingVO forwarding) {
         log.info("forwardMessage");
         log.info("forwarding:{}",forwarding);
-        int senderId = forwarding.getSenderId();
-        int receiverId = forwarding.getReceiverId();
+        String  senderId = forwarding.getSenderId();
+        String  receiverId = forwarding.getReceiverId();
         //TODO:考虑保存错题
         //转发消息
         try {

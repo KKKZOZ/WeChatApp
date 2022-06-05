@@ -52,4 +52,16 @@ public class UserController {
         return userService.getUserInfo(userId);
     }
 
+    @GetMapping("/invitationCode")
+    public int getInvitationCode(){
+        String userId = SecurityUtil.getUserId();
+        return userService.getInvitationCode(userId);
+    }
+
+    @GetMapping("/join")
+    public ResponseVO joinGroup(@RequestParam("code") int code){
+        String userId = SecurityUtil.getUserId();
+        return userService.joinGroup(userId,code);
+    }
+
 }

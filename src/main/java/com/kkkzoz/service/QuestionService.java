@@ -16,14 +16,13 @@ import com.kkkzoz.mapper.FavoriteMapper;
 import com.kkkzoz.mapper.MistakeMapper;
 import com.kkkzoz.mapper.PracticeStatusMapper;
 import com.kkkzoz.mapper.QuestionDTOMapper;
+import com.kkkzoz.match.MatchGenerator;
 import com.kkkzoz.repository.TestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private final QuestionDTOMapper questionDTOMapper;
+
 
     private final MistakeMapper mistakeMapper;
 
@@ -47,8 +47,11 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private int questionFourCount = 0;
 
+    private final int questionOneRange;
+    private final int questionFourRange;
+
     //TODO:解决这里报错但实际可用的情况
-    public QuestionService(QuestionDTOMapper questionDTOMapper, MistakeMapper mistakeMapper,
+    public QuestionService(QuestionDTOMapper questionDTOMapper,  MistakeMapper mistakeMapper,
                            PracticeStatusMapper practiceStatusMapper,
                            UserService userService,
                            FavoriteMapper favoriteMapper,
@@ -59,6 +62,8 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         this.userService = userService;
         this.favoriteMapper = favoriteMapper;
         this.testRepository = testRepository;
+        this.questionOneRange = this.getQuestionCount(1) + 1;
+        this.questionFourRange = this.getQuestionCount(4) + 1;
     }
 
     //    public List<QuestionDTO> getBatchQuestions(int id, String category) {
@@ -235,6 +240,43 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
         return new StatusDTO(category, doneCount, questionCount);
 
+    }
+
+    public List<QuestionDTO> generateTest(int category, int count) {
+        Set<Integer> questionIdSet = new HashSet<>();
+        int range = this.getRange(category);
+        Random random = new Random();
+        while (questionIdSet.size() < count) {
+            int randomNumber = 0;
+            while (randomNumber == 0) {
+                randomNumber = random.nextInt(range);
+            }
+            questionIdSet.add(randomNumber);
+        }
+        List<Integer> list = new ArrayList<>(questionIdSet);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        if (category == 1) {
+            for (int i : list) {
+                questionDTOList.add(questionDTOMapper.getQuestionOneDTOById(i));
+            }
+        }
+        if (category == 4) {
+            for (int i : list) {
+                questionDTOList.add(questionDTOMapper.getQuestionFourDTOById(i));
+            }
+        }
+        return questionDTOList;
+
+    }
+
+    private int getRange(int category) {
+        if (category == 1) {
+            return questionOneRange;
+        }
+        if (category == 4) {
+            return questionFourRange;
+        }
+        return 0;
     }
 }//End of the class
 

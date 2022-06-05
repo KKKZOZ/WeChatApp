@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ForwardingVO {
 
-    private int senderId;
-    private int receiverId;
+    private String senderId;
+    private String receiverId;
     private boolean correct;
     private int score;
 

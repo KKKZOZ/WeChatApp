@@ -16,8 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Api(tags = "题库接口")
@@ -95,6 +94,13 @@ public class QuestionController {
         int questionId = Integer.parseInt(params.get("questionId"));
         int category = Integer.parseInt(params.get("category"));
         return questionService.deleteFavorite(userId, questionId, category);
+    }
+
+    @GetMapping("/test/generate")
+    @ApiOperation(value = "生成试卷")
+    public List<QuestionDTO> generateTest(@RequestParam("category") int category,
+                                          @RequestParam("count") int count) {
+        return questionService.generateTest(category, count);
     }
 
 

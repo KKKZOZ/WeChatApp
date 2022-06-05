@@ -6,6 +6,7 @@ import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.repository.HistoryMatchRepository;
 import com.kkkzoz.repository.QueueRepository;
+import com.kkkzoz.utils.SecurityUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class MatchService {
 
 
     public ResponseVO saveMatchItem(HistoryMatchItem historyMatchItem) {
+        String userId = SecurityUtil.getUserId();
+        historyMatchItem.setUserId(userId);
         log.info("saveMatchItem: {}", historyMatchItem);
         historyMatchRepository
                 .save(historyMatchItem);

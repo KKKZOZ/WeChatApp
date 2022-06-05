@@ -32,6 +32,7 @@ public class TimeManagerController {
         String licenseNumber = params.get("licenseNumber");
         String teacherName = params.get("teacherName");
         int weekday = Integer.parseInt(params.get("weekday"));
+        int weekOfYear = Integer.parseInt(params.get("weekOfYear"));
         int startTime = Integer.parseInt(params.get("startTime"));
         int endTime = Integer.parseInt(params.get("endTime"));
         int mode = Integer.parseInt(params.get("mode"));
@@ -40,7 +41,7 @@ public class TimeManagerController {
                 .designSolution(userId, localDate,
                         licenseNumber, teacherName,
                         weekday, startTime,
-                        endTime, mode, category);
+                        endTime, mode, category,weekOfYear);
     }
 
 

@@ -6,6 +6,9 @@ package com.kkkzoz.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.kkkzoz.message.MessageVO;
+import com.kkkzoz.utils.JwtUtil;
+import com.kkkzoz.utils.SecurityUtil;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Slf4j
-@ServerEndpoint("/api/v2/match/{userId}")
+@ServerEndpoint("/api/v2/match/{token}")
 public class WebSocketServer {
 
 
@@ -31,20 +34,28 @@ public class WebSocketServer {
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/
     private static int onlineCount = 0;
     /**concurrent包的线程安全Set，用来存放每个客户端对应的WebSocket对象。*/
-    private static ConcurrentHashMap<Integer,WebSocketServer> webSocketMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String ,WebSocketServer> webSocketMap = new ConcurrentHashMap<>();
     /**与某个客户端的连接会话，需要通过它来给客户端发送数据*/
     private Session session;
     /**接收userId*/
-    private int userId;
+    private String userId;
 
     /**
      * 连接建立成
      * 功调用的方法
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam("userId") int userId) {
+    public void onOpen(Session session, @PathParam("token") String token) {
+        String openId;
+        try {
+            Claims claims = JwtUtil.parseJWT(token);
+            openId = claims.getSubject();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("token非法");
+        }
         this.session = session;
-        this.userId=userId;
+        this.userId=openId;
         if(webSocketMap.containsKey(userId)){
             webSocketMap.remove(userId);
             //加入set中
@@ -109,7 +120,7 @@ public class WebSocketServer {
     }
 
 
-    public void send(int receiverId, MessageVO msg) {
+    public void send(String receiverId, MessageVO msg) {
         log.info("receiverId:{}",receiverId);
         synchronized (this){
             //TODO: 如果receiverServer不存在，向sender方发送异常，强制结束这次比赛

@@ -13,11 +13,18 @@ public class HistoryMatchItem {
 
     @Id
     private String id;
-    private int userId;
+
+    private String userId;
+
     private int userScore;
-    private int opponentId;
+
+    private String opponentId;
+
     private int opponentScore;
+
     private String matchTime;
+
 //    "2020-12-08 17:30:50"
     private List<Integer> questionIdList;
+
 }

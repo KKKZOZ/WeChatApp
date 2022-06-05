@@ -41,9 +41,9 @@ public class TestController {
 
     @PostMapping("/3")
     public ResponseVO testSendingMessage(@RequestBody Map<String,String> map){
-        int receiverId = Integer.parseInt(map.get("receiverId"));
-        String message = map.get("message");
-        webSocketServer.send(receiverId,new MessageVO(message,message));
+//        int receiverId = Integer.parseInt(map.get("receiverId"));
+//        String message = map.get("message");
+//        webSocketServer.send(receiverId,new MessageVO(message,message));
 
         return new ResponseVO(ResultCode.SUCCESS);
     }

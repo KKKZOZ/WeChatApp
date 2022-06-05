@@ -12,6 +12,6 @@ public class QueueItem {
 
     private int category;
 
-    private int userId;
+    private String userId;
 
 }

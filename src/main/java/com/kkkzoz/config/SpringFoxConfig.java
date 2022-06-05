@@ -20,6 +20,8 @@ import static springfox.documentation.builders.PathSelectors.regex;
 @EnableSwagger2
 @EnableWebMvc
 public class SpringFoxConfig {
+
+//    http://localhost:8888/swagger-ui/index.html
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)

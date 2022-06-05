@@ -7,6 +7,7 @@ import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.match.MatchManager;
 import com.kkkzoz.match.MatchService;
 import com.kkkzoz.repository.HistoryMatchRepository;
+import com.kkkzoz.utils.SecurityUtil;
 import com.kkkzoz.vo.ForwardingVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,12 +34,16 @@ public class MatchController {
     @ApiOperation(value="对手之间转发消息")
     public ResponseVO forwarding(@RequestBody ForwardingVO forwarding){
         log.info("MatchController forwarding");
+        String userId = SecurityUtil.getUserId();
+        forwarding.setSenderId(userId);
       return  matchManager.forwardMessage(forwarding);
     }
 
     @PostMapping("/start")
     @ApiOperation(value="开始匹配")
     public ResponseVO startMatch(@RequestBody QueueItem queueItem){
+        String userId = SecurityUtil.getUserId();
+        queueItem.setUserId(userId);
         matchManager.addUserToQueue(queueItem);
         return new ResponseVO(ResultCode.SUCCESS);
     }

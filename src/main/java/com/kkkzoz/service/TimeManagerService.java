@@ -80,10 +80,12 @@ public class TimeManagerService {
 
         Segment segment = solution.getSegments().get(segmentId - 1);
         log.info("segment: {}", segment);
+        User user = userMapper.selectById(studentId);
+        String studentName = user.getName();
         //如果此人在预约名单中，则取消预约
-        if (segment.getMembers().contains(studentId)) {
+        if (segment.getMembers().contains(studentName)) {
             segment.setOccupy(segment.getOccupy() - 1);
-            segment.getMembers().remove(studentId);
+            segment.getMembers().remove(studentName);
         } else {
             return new ResponseVO(ResultCode.RESERVE_CANCEL_ERROR);
         }
@@ -105,7 +107,7 @@ public class TimeManagerService {
             int startTime,
             int endTime,
             int mode,
-            int category) {
+            int category,int weekOfYear) {
         //TODO: 根据日期，星期，时间，模式，类别，教师id，生成一个方案
 
 
@@ -124,6 +126,7 @@ public class TimeManagerService {
             solution.setTeacherName(teacherName);
             solution.setWeekday(weekday);
             solution.setLicenseNumber(licenseNumber);
+            solution.setWeekOfYear(weekOfYear);
             solution.setSegments(new ArrayList<Segment>());
 
             if (totalTime % (mode * i) != 0) {

@@ -46,6 +46,7 @@ create table app_user
     password     varchar(20),
     role         varchar(10),
     "category"        int,
+    invitation_code int,
     avatar_url  varchar(200),
     years_of_teaching numeric(2, 0),
     school_name varchar(100),

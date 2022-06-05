@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Slf4j
@@ -30,8 +31,8 @@ public class MatchHandler {
 
     private int size;
 
-    private int userAId;
-    private int userBId;
+    private String userAId;
+    private String userBId;
 
     private boolean userAStatus=false;
     private boolean userBStatus=false;
@@ -41,7 +42,7 @@ public class MatchHandler {
     private List<Integer> questionIdList;
 
 
-    public MatchHandler(int userAId, int userBId,int category,int size) {
+    public MatchHandler(String userAId, String userBId,int category,int size) {
         this.userAId = userAId;
         this.userBId = userBId;
         this.category = category;
@@ -101,7 +102,7 @@ public class MatchHandler {
 
 
 
-    public void sendQuestion(int userId){
+    public void sendQuestion(String userId){
         log.info("发送题目: userId:{}, progress:{}",userId,this.progress);
         webSocketServer
                 .send(userId, new MessageVO(
@@ -112,22 +113,24 @@ public class MatchHandler {
 
 
 
-    public void changeStatus(int userId,boolean status){
-        if (userId==userAId){
+    public void changeStatus(String userId,boolean status){
+        if (Objects.equals(userId, userAId)){
             this.setUserAStatus(status);
         }
-        if (userId==userBId){
+        if (Objects.equals(userId, userBId)){
             this.setUserBStatus(status);
         }
     }
 
 
     public void setUserAStatus(boolean userAStatus) {
+        log.info("userAStatus:{}",userAStatus);
         this.userAStatus = userAStatus;
         this.checkProgress();
     }
 
     public void setUserBStatus(boolean userBStatus) {
+        log.info("userBStatus:{}",userBStatus);
         this.userBStatus = userBStatus;
         this.checkProgress();
     }

@@ -28,7 +28,7 @@ public class WeChatAppApplicationTests {
 
     @Test
     void testMatchHandler(){
-        MatchHandler matchHandler = new MatchHandler(1,2,1,3);
+        MatchHandler matchHandler = new MatchHandler("1","2",1,3);
         System.out.println(matchHandler.getQuestionIdList().toString());
     }
 

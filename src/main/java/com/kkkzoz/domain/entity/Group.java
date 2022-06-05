@@ -17,5 +17,10 @@ public class Group {
     private String teacherId;
     
     private String studentId;
+
+    public Group(String teacherId, String studentId) {
+        this.teacherId = teacherId;
+        this.studentId = studentId;
+    }
 }
 
