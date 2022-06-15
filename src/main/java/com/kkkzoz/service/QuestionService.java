@@ -2,22 +2,17 @@ package com.kkkzoz.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkkzoz.domain.entity.Favorite;
-import com.kkkzoz.domain.entity.Mistake;
-import com.kkkzoz.domain.entity.PracticeStatus;
-import com.kkkzoz.domain.entity.Test;
+import com.kkkzoz.domain.entity.*;
 import com.kkkzoz.dto.MistakeDTO;
 import com.kkkzoz.dto.QuestionDTO;
 import com.kkkzoz.dto.StatusDTO;
 import com.kkkzoz.global.APIException;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
-import com.kkkzoz.mapper.FavoriteMapper;
-import com.kkkzoz.mapper.MistakeMapper;
-import com.kkkzoz.mapper.PracticeStatusMapper;
-import com.kkkzoz.mapper.QuestionDTOMapper;
+import com.kkkzoz.mapper.*;
 import com.kkkzoz.match.MatchGenerator;
 import com.kkkzoz.repository.TestRepository;
+import com.kkkzoz.vo.QuestionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +38,12 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
     private final TestRepository testRepository;
 
+    private final QuestionOneMapper questionOneMapper;
+
+    private final QuestionFourMapper questionFourMapper;
+
+    private final ChoiceMapper choiceMapper;
+
     private int questionOneCount = 0;
 
     private int questionFourCount = 0;
@@ -55,7 +56,10 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
                            PracticeStatusMapper practiceStatusMapper,
                            UserService userService,
                            FavoriteMapper favoriteMapper,
-                           TestRepository testRepository) {
+                           TestRepository testRepository,
+                           QuestionOneMapper questionOneMapper,
+                            QuestionFourMapper questionFourMapper,
+                           ChoiceMapper choiceMapper) {
         this.questionDTOMapper = questionDTOMapper;
         this.mistakeMapper = mistakeMapper;
         this.practiceStatusMapper = practiceStatusMapper;
@@ -64,6 +68,9 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
         this.testRepository = testRepository;
         this.questionOneRange = this.getQuestionCount(1) + 1;
         this.questionFourRange = this.getQuestionCount(4) + 1;
+        this.questionOneMapper = questionOneMapper;
+        this.questionFourMapper = questionFourMapper;
+        this.choiceMapper = choiceMapper;
     }
 
     //    public List<QuestionDTO> getBatchQuestions(int id, String category) {
@@ -118,6 +125,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
     public List<QuestionDTO> getQuestionBatch(int questionId, int category, int count) {
+        log.info("getQuestionBatch: questionId={}, category={}, count={}", questionId, category, count);
         if (category == 1) {
             return questionDTOMapper.getQuestionOneDTOBatch(questionId, count);
         }
@@ -168,7 +176,9 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     }
 
     public Test getTestResult(String userId, int testId, int category) {
-        return testRepository.findByUserIdAndTestIdAndCategory(userId, testId, category);
+//        return testRepository.findByUserIdAndTestIdAndCategory(userId, testId, category);
+        //TODO:记得修改
+        return null;
     }
 
     public ResponseVO addPracticeStatus(String userId, int questionId, int category) {
@@ -254,6 +264,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
             questionIdSet.add(randomNumber);
         }
         List<Integer> list = new ArrayList<>(questionIdSet);
+        log.info("list: " + list);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         if (category == 1) {
             for (int i : list) {
@@ -265,6 +276,7 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
                 questionDTOList.add(questionDTOMapper.getQuestionFourDTOById(i));
             }
         }
+        log.info("questionDTOList: " + questionDTOList);
         return questionDTOList;
 
     }
@@ -277,6 +289,74 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
             return questionFourRange;
         }
         return 0;
+    }
+
+    public ResponseVO importQuestion(int category, List<QuestionVO> questions) {
+        //先处理题目
+        Long id;
+        for (QuestionVO questionVO : questions) {
+            if (category == 1) {
+
+                QuestionOne question = new QuestionOne();
+                question.setImgContent(questionVO.getImgContent());
+                question.setTextContent(questionVO.getTextContent());
+                question.setChoiceNumber(questionVO.getChoiceNumber());
+                question.setAnswer(questionVO.getAnswer());
+                question.setExplanation(questionVO.getExplanation());
+                questionOneMapper.insert(question);
+                id=question.getId();
+            }else{
+                QuestionFour question = new QuestionFour();
+                question.setImgContent(questionVO.getImgContent());
+                question.setTextContent(questionVO.getTextContent());
+                question.setChoiceNumber(questionVO.getChoiceNumber());
+                question.setAnswer(questionVO.getAnswer());
+                question.setExplanation(questionVO.getExplanation());
+                questionFourMapper.insert(question);
+                id=question.getId();
+            }
+            List<String> choices = questionVO.getChoices();
+
+            //再处理选项
+            if (questionVO.getChoiceNumber()==2){
+                Choice choice1 = new Choice();
+                choice1.setContent("正确");
+                choice1.setQuestionId(id);
+                choice1.setCategory(category);
+                choice1.setOrderOfChoice(1);
+                choiceMapper.insert(choice1);
+                Choice choice2 = new Choice();
+                choice2.setContent("错误");
+                choice2.setQuestionId(id);
+                choice2.setCategory(category);
+                choice2.setOrderOfChoice(2);
+                choiceMapper.insert(choice2);
+            }
+            else {
+                int i=1;
+                for (String content : choices) {
+                    Choice realChoice = new Choice();
+                    realChoice.setContent(content);
+                    realChoice.setQuestionId(id);
+                    realChoice.setCategory(category);
+                    realChoice.setOrderOfChoice(i);
+                    i++;
+                    //TODO:对图像的处理？
+                    choiceMapper.insert(realChoice);
+            }
+
+
+            }
+
+
+
+
+        }
+
+
+
+
+        return new ResponseVO<>(ResultCode.SUCCESS);
     }
 }//End of the class
 

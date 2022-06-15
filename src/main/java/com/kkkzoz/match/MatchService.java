@@ -2,16 +2,20 @@ package com.kkkzoz.match;
 
 
 import com.kkkzoz.domain.entity.HistoryMatchItem;
+import com.kkkzoz.domain.entity.QueueItem;
+import com.kkkzoz.dto.QuestionDTO;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.repository.HistoryMatchRepository;
 import com.kkkzoz.repository.QueueRepository;
+import com.kkkzoz.service.QuestionService;
 import com.kkkzoz.utils.SecurityUtil;
+import com.kkkzoz.vo.RobotStatusVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -20,6 +24,10 @@ import java.util.List;
 public class MatchService {
 
     private final HistoryMatchRepository historyMatchRepository;
+
+    private static final int DEFAULT_COUNT = 5;
+
+    private final QuestionService questionService;
 
 
     public ResponseVO saveMatchItem(HistoryMatchItem historyMatchItem) {
@@ -35,5 +43,27 @@ public class MatchService {
 
     public List<HistoryMatchItem> getHistoryMatches(int userId) {
         return historyMatchRepository.findByUserId(userId);
+    }
+
+    public Map<String, Object> startRobotMatch(QueueItem queueItem) {
+        //开始人机匹配
+        //先确定题目列表
+        List<QuestionDTO> questionList = questionService.generateTest(queueItem.getCategory(), DEFAULT_COUNT);
+        //开始随机生成用时和答案
+        List<RobotStatusVO> statusList = new ArrayList<>();
+        for (int i = 0; i < DEFAULT_COUNT; i++) {
+            RobotStatusVO statusVO = new RobotStatusVO();
+            Random random = new Random();
+            statusVO.setChoice(random.nextInt(1,5));
+            statusVO.setTime(random.nextInt(1,10));
+            statusList.add(statusVO);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("questionList", questionList);
+        map.put("statusList", statusList);
+        return map;
+
+
     }
 }

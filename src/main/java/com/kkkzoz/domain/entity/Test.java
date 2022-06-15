@@ -14,7 +14,6 @@ public class Test {
     @Id
     private String id;
     private String userId;
-    private int testId;
     private int category;
     private int score;
     private List<QA> questions;

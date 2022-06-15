@@ -3,12 +3,12 @@ create table question_1
 (
     id            bigserial
         primary key,
-    text_content  varchar(500),
+    text_content  varchar(1500),
     img_content   varchar(100),
     choice_number numeric(2),
     answer       int,
-    explanation   varchar(400),
-    unique ("text_content", "img_content", "choice_number", "answer",explanation)
+    explanation   varchar(2000)
+
 );
 
 -- 科目四题库
@@ -16,12 +16,12 @@ create table question_4
 (
     id            bigserial
         primary key,
-    text_content  varchar(500),
+    text_content  varchar(1500),
     img_content   varchar(100),
     choice_number numeric(2),
     answer       int,
-    explanation   varchar(400),
-    unique ("text_content", "img_content", "choice_number", "answer",explanation)
+    explanation   varchar(2000)
+
 );
 
 

@@ -1,33 +1,27 @@
-package com.kkkzoz.domain.entity;
+package com.kkkzoz.vo;
 
-
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * 题库(Question)表实体类
- *
- * @author makejava
- * @since 2022-04-25 13:56:21
- */
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Question {
-    
-    private Long id;
-    
-    private String textContent;
-    
-    private String imgContent;
-    
-    private Integer choiceNumber;
-    
-    private int answer;
-    
-    private String explanation;
-}
+public class QuestionVO {
 
+    private String textContent;
+
+    private String imgContent;
+
+    private Integer choiceNumber;
+
+    private int answer;
+
+    private String explanation;
+
+    private String tags;
+
+    private List<String> choices;
+}

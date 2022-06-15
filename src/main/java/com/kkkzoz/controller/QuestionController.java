@@ -10,6 +10,7 @@ import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.Tested;
 import com.kkkzoz.service.QuestionService;
 import com.kkkzoz.utils.SecurityUtil;
+import com.kkkzoz.vo.QuestionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -107,6 +108,8 @@ public class QuestionController {
     @PostMapping("/test")
     @ApiOperation(value = "保存试卷结果")
     public ResponseVO addTestResult(@RequestBody Test test) {
+        String userId = SecurityUtil.getUserId();
+        test.setUserId(userId);
         return questionService.addTestResult(test);
     }
 
@@ -133,6 +136,12 @@ public class QuestionController {
     public StatusDTO getPracticeStatus() {
         String userId = SecurityUtil.getUserId();
         return questionService.getPracticeStatus(userId);
+    }
+
+    @PostMapping("/import/{category}")
+    @ApiOperation(value = "导入题目")
+    public ResponseVO importQuestion(@PathVariable("category") int category, @RequestBody List<QuestionVO> questions) {
+        return questionService.importQuestion(category, questions);
     }
 
 

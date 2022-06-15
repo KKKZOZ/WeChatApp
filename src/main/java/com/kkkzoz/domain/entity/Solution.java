@@ -27,7 +27,6 @@ public class Solution {
 
     private int weekday;
 
-    //TODO:对weekOfYear进行相应调整，并且加上TimeUtil
     private int weekOfYear;
 
     private List<Segment> segments;

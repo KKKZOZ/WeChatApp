@@ -17,6 +17,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,6 +28,8 @@ public class MatchController {
     private final MatchManager matchManager;
 
     private final MatchService matchService;
+
+
 
 
 
@@ -46,6 +49,14 @@ public class MatchController {
         queueItem.setUserId(userId);
         matchManager.addUserToQueue(queueItem);
         return new ResponseVO(ResultCode.SUCCESS);
+    }
+
+    @PostMapping("/start/robot")
+    @ApiOperation(value="开始人机匹配")
+    public Map<String, Object> startRobotMatch(@RequestBody QueueItem queueItem){
+        String userId = SecurityUtil.getUserId();
+        queueItem.setUserId(userId);
+        return matchService.startRobotMatch(queueItem);
     }
 
     @GetMapping("/over")
