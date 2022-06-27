@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RobotStatusVO {
 
-    private int choice;
+    private boolean answer;
     private int time;
 }

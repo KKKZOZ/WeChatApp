@@ -1,8 +1,13 @@
 package com.kkkzoz;
 
+import org.apache.catalina.connector.Connector;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.time.LocalDate;
@@ -17,8 +22,13 @@ import java.util.List;
 public class WeChatAppApplication {
 
     public static void main(String[] args) {
+        //TODO: 给Redis加密
         SpringApplication.run(WeChatAppApplication.class, args);
-        //2022-05-06
+
+
+        }
+
+
 
 
 //        List<String> array = new ArrayList<>();
@@ -32,6 +42,5 @@ public class WeChatAppApplication {
 //        array.sort(Comparator.naturalOrder());
 //        System.out.println(array);
 
-    }
-
 }
+

@@ -7,6 +7,7 @@ import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.service.UserService;
 import com.kkkzoz.utils.SecurityUtil;
 import com.kkkzoz.vo.UserVO;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,13 @@ public class UserController {
     public ResponseVO joinGroup(@RequestParam("code") int code){
         String userId = SecurityUtil.getUserId();
         return userService.joinGroup(userId,code);
+    }
+
+    @GetMapping("/teacherInfo")
+    @ApiOperation(value="获取老师信息")
+    public Map<String,String> getTeacherInfo(){
+        String userId = SecurityUtil.getUserId();
+        return userService.getTeacherInfo(userId);
     }
 
 }

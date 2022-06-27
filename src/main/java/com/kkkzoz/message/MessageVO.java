@@ -13,9 +13,12 @@ public class MessageVO<T> {
 
     public static final String START = "start";
 
+
     public static final String MATCH_CONTENT = "match_content";
 
     public static final String FORWARDING ="forwarding";
+
+    public static final String TERMINATE = "terminate";
 
     public static final String OVER = "over";
 

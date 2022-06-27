@@ -51,7 +51,6 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
     private final int questionOneRange;
     private final int questionFourRange;
 
-    //TODO:解决这里报错但实际可用的情况
     public QuestionService(QuestionDTOMapper questionDTOMapper,  MistakeMapper mistakeMapper,
                            PracticeStatusMapper practiceStatusMapper,
                            UserService userService,
@@ -358,5 +357,18 @@ public class QuestionService extends ServiceImpl<MistakeMapper, Mistake> {
 
         return new ResponseVO<>(ResultCode.SUCCESS);
     }
+
+//    public ResponseVO modifyQuestions() {
+//        List<QuestionFour> questions= questionFourMapper.selectList(null);
+//        log.info(String.valueOf(questions.size()));
+//        for (QuestionFour question : questions) {
+//            if (question.getExplanation().contains("<img")){
+//                String temp=question.getExplanation().replaceAll("<img","<img style=\"width:100%;\" ");
+//                question.setExplanation(temp);
+//            }
+//            questionFourMapper.updateById(question);
+//        }
+//        return new ResponseVO(ResultCode.SUCCESS);
+//    }
 }//End of the class
 

@@ -280,4 +280,15 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         groupMapper.insert(new Group(teacherId,userId));
         return new ResponseVO(SUCCESS);
     }
+
+    public Map<String, String> getTeacherInfo(String userId) {
+        Map<String, String> teacherInfo = new HashMap<>();
+        String teacherId = getTeacherIdByUserId(userId);
+        User teacher = userMapper.selectById(teacherId);
+        teacherInfo.put("username", teacher.getUsername());
+        teacherInfo.put("url", teacher.getAvatarUrl());
+        teacherInfo.put("count",userMapper.findGroupCountByTeacherId(teacherId).toString());
+        return teacherInfo;
+
+    }
 }

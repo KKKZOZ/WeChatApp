@@ -40,10 +40,11 @@ public class QuestionController {
     @PostMapping("/batch")
     @ApiOperation(value = "批量获取题目")
     public List<QuestionDTO> getQuestionBatch(@RequestBody Map<String, String> params) {
-        int questionId = Integer.parseInt(params.get("questionId"));
-        int category = Integer.parseInt(params.get("category"));
-        int count = Integer.parseInt(params.get("count"));
-        return questionService.getQuestionBatch(questionId, category, count);
+        int questionId= Integer.parseInt(params.get("questionId"));
+        int category= categoryUtil(Integer.parseInt(params.get("category")));
+        int count= Integer.parseInt(params.get("count"));
+            return questionService.getQuestionBatch(questionId,category,count);
+
     }
 
 
@@ -70,13 +71,15 @@ public class QuestionController {
     public ResponseVO deleteMistake(@RequestBody Map<String, String> params) {
         String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
-        int category = Integer.parseInt(params.get("category"));
+        int category= categoryUtil(Integer.parseInt(params.get("category")));
         return questionService.deleteMistake(userId, questionId, category);
     }
 
     @PostMapping("/favorite")
     @ApiOperation(value = "添加收藏")
     public ResponseVO addFavorite(@RequestBody Favorite favorite) {
+        String userId = SecurityUtil.getUserId();
+        favorite.setUserId(userId);
         return questionService.addFavorite(favorite);
     }
 
@@ -93,7 +96,7 @@ public class QuestionController {
     public ResponseVO deleteFavorite(@RequestBody Map<String, String> params) {
         String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
-        int category = Integer.parseInt(params.get("category"));
+        int category= categoryUtil(Integer.parseInt(params.get("category")));
         return questionService.deleteFavorite(userId, questionId, category);
     }
 
@@ -127,7 +130,7 @@ public class QuestionController {
     public ResponseVO addPracticeStatus(@RequestBody Map<String, String> params) {
         String userId = SecurityUtil.getUserId();
         int questionId = Integer.parseInt(params.get("questionId"));
-        int category = Integer.parseInt(params.get("category"));
+        int category= categoryUtil(Integer.parseInt(params.get("category")));
         return questionService.addPracticeStatus(userId, questionId, category);
     }
 
@@ -144,6 +147,20 @@ public class QuestionController {
         return questionService.importQuestion(category, questions);
     }
 
+//    @GetMapping("/modify")
+//    public ResponseVO modifyQuestions() {
+//        return questionService.modifyQuestions();
+//    }
+
+
+    private int categoryUtil(int old){
+        //如果科目为2或者3，默认抽取科目一的题库
+        if (old==2 || old==3){
+            return 1;
+        }else {
+            return old;
+        }
+    }
 
 }
 

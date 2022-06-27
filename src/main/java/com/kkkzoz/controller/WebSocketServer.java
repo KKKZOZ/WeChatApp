@@ -5,10 +5,12 @@ package com.kkkzoz.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.kkkzoz.match.MatchManager;
 import com.kkkzoz.message.MessageVO;
 import com.kkkzoz.utils.JwtUtil;
 import com.kkkzoz.utils.SecurityUtil;
 import io.jsonwebtoken.Claims;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @ServerEndpoint("/api/v2/match/{token}")
+@AllArgsConstructor
 public class WebSocketServer {
 
 
@@ -39,6 +42,8 @@ public class WebSocketServer {
     private Session session;
     /**接收userId*/
     private String userId;
+
+    private final MatchManager matchManager;
 
     /**
      * 连接建立成
@@ -120,11 +125,16 @@ public class WebSocketServer {
     }
 
 
-    public void send(String receiverId, MessageVO msg) {
+    public boolean send(String receiverId, MessageVO msg) {
         log.info("receiverId:{}",receiverId);
         synchronized (this){
+            log.info("ConcurrentHashMap:{}",webSocketMap);
             //TODO: 如果receiverServer不存在，向sender方发送异常，强制结束这次比赛
+
             WebSocketServer receiverServer = webSocketMap.get(receiverId);
+            if (receiverServer == null){
+                return false;
+            }
             try {
 
                 String content = JSON.toJSONString(msg);
@@ -134,7 +144,13 @@ public class WebSocketServer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return true;
         }
+
+    }
+
+    private void handleTermination(String receiverId){
+
 
     }
 

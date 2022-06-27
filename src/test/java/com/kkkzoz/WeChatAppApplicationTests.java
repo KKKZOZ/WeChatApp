@@ -10,7 +10,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WeChatAppApplicationTests {
 
 
@@ -25,18 +25,18 @@ public class WeChatAppApplicationTests {
     @Test
     void contextLoads() {
     }
-
-    @Test
-    void testMatchHandler(){
-        MatchHandler matchHandler = new MatchHandler("1","2",1,3);
-        System.out.println(matchHandler.getQuestionIdList().toString());
-    }
-
-    @Test
-    void testJson(){
-        String msg="{\"data\":\"{opponentId:100}\",\"msg\":\"start\"}";
-        JSONObject jsonObject = JSON.parseObject(msg);
-        System.out.println(jsonObject);
-    }
+//
+//    @Test
+//    void testMatchHandler(){
+//        MatchHandler matchHandler = new MatchHandler("1","2",1,3);
+//        System.out.println(matchHandler.getQuestionIdList().toString());
+//    }
+//
+//    @Test
+//    void testJson(){
+//        String msg="{\"data\":\"{opponentId:100}\",\"msg\":\"start\"}";
+//        JSONObject jsonObject = JSON.parseObject(msg);
+//        System.out.println(jsonObject);
+//    }
 
 }

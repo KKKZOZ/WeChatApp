@@ -7,7 +7,6 @@ import com.kkkzoz.dto.QuestionDTO;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
 import com.kkkzoz.repository.HistoryMatchRepository;
-import com.kkkzoz.repository.QueueRepository;
 import com.kkkzoz.service.QuestionService;
 import com.kkkzoz.utils.SecurityUtil;
 import com.kkkzoz.vo.RobotStatusVO;
@@ -26,6 +25,12 @@ public class MatchService {
     private final HistoryMatchRepository historyMatchRepository;
 
     private static final int DEFAULT_COUNT = 5;
+
+    private static final int MIN_TIME = 0;
+
+    private static final int MAX_TIME = 15;
+
+    private static final int POSSIBILITY = 70;
 
     private final QuestionService questionService;
 
@@ -54,8 +59,9 @@ public class MatchService {
         for (int i = 0; i < DEFAULT_COUNT; i++) {
             RobotStatusVO statusVO = new RobotStatusVO();
             Random random = new Random();
-            statusVO.setChoice(random.nextInt(1,5));
-            statusVO.setTime(random.nextInt(1,10));
+            int target = random.nextInt(1,101);
+            statusVO.setAnswer(target <= POSSIBILITY);
+            statusVO.setTime(random.nextInt(MIN_TIME, MAX_TIME));
             statusList.add(statusVO);
         }
 
