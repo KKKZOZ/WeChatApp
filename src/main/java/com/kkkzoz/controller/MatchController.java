@@ -61,7 +61,8 @@ public class MatchController {
 
     @GetMapping("/over")
     @ApiOperation(value="结束比赛时调用，方便后端整理资源")
-    public ResponseVO overMatch(@RequestParam("userId") int userId){
+    public ResponseVO overMatch(){
+        String userId = SecurityUtil.getUserId();
        return matchManager.releaseResource(userId);
     }
 

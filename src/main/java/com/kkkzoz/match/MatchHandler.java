@@ -55,7 +55,6 @@ public class MatchHandler {
         this.progress = 0;
 
         //互相发送userId
-        this.initialize();
     }
 
     private void sendMessage(String sender, String receiver, MessageVO message) {
@@ -71,7 +70,7 @@ public class MatchHandler {
     }
 
     //互相发送userId,并发送第一道题
-    private void initialize() {
+    public void initialize() {
         //username,url
 
 
@@ -168,5 +167,13 @@ public class MatchHandler {
         log.info("userBStatus:{}", userBStatus);
         this.userBStatus = userBStatus;
         this.checkProgress();
+    }
+
+    public String getOpponentId(String userId){
+        if (Objects.equals(userId, userAId)) {
+            return userBId;
+        }else {
+            return userAId;
+        }
     }
 }
