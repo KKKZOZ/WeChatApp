@@ -17,6 +17,7 @@ public class AssetService {
 
     public String getFileContent(int fileId) {
         File file = assetMapper.selectById(fileId);
+        log.info("fileContent: {}", file.getFileContent());
         return file.getFileContent();
     }
 }

@@ -1,7 +1,6 @@
 package com.kkkzoz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.kkkzoz.domain.entity.Choice;
 import com.kkkzoz.domain.entity.File;
 import org.springframework.stereotype.Component;
 
