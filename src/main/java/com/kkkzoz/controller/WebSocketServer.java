@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @ServerEndpoint("/api/v2/match/{token}")
-@AllArgsConstructor
 public class WebSocketServer {
 
 
@@ -43,7 +42,6 @@ public class WebSocketServer {
     /**接收userId*/
     private String userId;
 
-    private final MatchManager matchManager;
 
     /**
      * 连接建立成

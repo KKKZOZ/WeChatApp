@@ -99,3 +99,12 @@ create table class_group
     primary key (id),
     unique (teacher_id, student_id)
 );
+
+create table asset
+(
+    id bigserial,
+    file_name varchar(10000),
+    file_content varchar(10000000),
+    primary key (id),
+    unique(file_name)
+);

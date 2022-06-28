@@ -288,6 +288,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
         teacherInfo.put("username", teacher.getUsername());
         teacherInfo.put("url", teacher.getAvatarUrl());
         teacherInfo.put("count",userMapper.findGroupCountByTeacherId(teacherId).toString());
+        teacherInfo.put("invitationCode", String.valueOf(teacher.getInvitationCode()));
         return teacherInfo;
 
     }

@@ -15,7 +15,7 @@ public interface UserMapper extends BaseMapper<User> {
         return this.selectOne(queryWrapper);
     }
 
-    int findTeacherByStudentId(String studentId);
+    String findTeacherByStudentId(String studentId);
 
     Integer findGroupCountByTeacherId(String teacherId);
 
