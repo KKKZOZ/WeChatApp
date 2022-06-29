@@ -12,6 +12,7 @@ import com.kkkzoz.repository.QueueRepository;
 import com.kkkzoz.vo.ForwardingVO;
 import io.goeasy.GoEasy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,8 @@ public class MatchManager {
     private final UserMapper userMapper;
 
 
-    private static final int MAX_MATCH_SIZE = 50;
+    private static final int MAX_MATCH_SIZE = 5;
+
 
     private int count = 0;
 
@@ -42,19 +44,23 @@ public class MatchManager {
 
     private Map<String, MatchHandler> correspondingHandlers;
 
+
     private GoEasy goEasy;
 
 
 
     public MatchManager(QueueRepository queueRepository, WebSocketServer webSocketServer,UserMapper userMapper) {
+
         this.queueRepository = queueRepository;
         this.webSocketServer = webSocketServer;
 //        this.correspondingMap = new HashMap<>();
 //        this.handlers = new HashMap<>();
         this.correspondingHandlers = new HashMap<>();
+
         this.userMapper = userMapper;
         this.goEasy = new GoEasy
                 ("https://rest-hangzhou.goeasy.io", "BC-69353f4a5e76404d8a2c5dd26600654e");
+
     }
 
     @PostConstruct
@@ -68,6 +74,7 @@ public class MatchManager {
         log.info("addUserToQueue :{}", queueItem);
         queueRepository.save(queueItem);
         checkQueue(queueItem.getCategory());
+        log.info("checkQueue over");
     }
 
 
@@ -115,7 +122,9 @@ public class MatchManager {
         log.info("forwarding:{}", forwarding);
         String senderId = forwarding.getSenderId();
         String receiverId = forwarding.getReceiverId();
+
         String receiverUsername = userMapper.selectById(receiverId).getUsername();
+
         //TODO:考虑保存错题
         //转发消息
         try {
@@ -123,6 +132,7 @@ public class MatchManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         String content = JSON.toJSONString(new MessageVO(MessageVO.FORWARDING, forwarding));
 
@@ -156,6 +166,7 @@ public class MatchManager {
     public ResponseVO releaseResource(String userId) {
         log.info("releaseResource");
         correspondingHandlers.remove(userId);
+
         return new ResponseVO(ResultCode.SUCCESS);
     }
 
@@ -188,3 +199,16 @@ public class MatchManager {
         return new ResponseVO(ResultCode.SUCCESS);
     }
 }
+
+        return new ResponseVO(ResultCode.SUCCESS);
+    }
+
+    public void notifyOnClose(String userId) {
+        //userId为主动关闭webSocket的那方
+        String opponentId = correspondingHandlers.get(userId).getOpponentId(userId);
+        log.info("notifyOnClose  userId:{}", userId);
+        webSocketServer
+                .send(opponentId, new MessageVO(MessageVO.TERMINATE, null));
+    }
+}
+

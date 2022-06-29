@@ -1,20 +1,12 @@
 package com.kkkzoz;
 
-import org.apache.catalina.connector.Connector;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @MapperScan("com.kkkzoz.mapper")
 @SpringBootApplication
@@ -24,11 +16,16 @@ public class WeChatAppApplication {
     public static void main(String[] args) {
         //TODO: 给Redis加密
         SpringApplication.run(WeChatAppApplication.class, args);
+//        Map<String, String> map = new HashMap<>();
+//        map.put("asd", "asd");
+//        map.put("dsa", "dsa");
+//        String value = map.get("asd");
+//        System.out.println(value);
+//        map.put("asd", "KKKZOZ");
+//        String v2 = map.get("asd");
+//        System.out.println(v2);
 
-
-        }
-
-
+    }
 
 
 //        List<String> array = new ArrayList<>();

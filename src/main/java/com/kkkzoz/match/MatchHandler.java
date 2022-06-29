@@ -62,6 +62,7 @@ public class MatchHandler {
         this.questionIdList = matchGenerator.generateQuestionList(category, size);
         this.progress = 0;
 
+
         this.userAUserName = userMapper.selectById(userAId).getUsername();
         this.userBUserName = userMapper.selectById(userBId).getUsername();
 
@@ -70,6 +71,9 @@ public class MatchHandler {
 
 //        //互相发送userId
 //        this.initialize();
+
+        //互相发送userId
+
     }
 
     private void sendMessage(String sender, String receiver, MessageVO message) {
@@ -178,6 +182,7 @@ public class MatchHandler {
         this.userBStatus = userBStatus;
         this.checkProgress();
     }
+
     public String getOpponentId(String userId){
         if (Objects.equals(userId, userAId)) {
             return userBId;
