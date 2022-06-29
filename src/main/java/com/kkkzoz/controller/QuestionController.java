@@ -104,6 +104,7 @@ public class QuestionController {
     @ApiOperation(value = "生成试卷")
     public List<QuestionDTO> generateTest(@RequestParam("category") int category,
                                           @RequestParam("count") int count) {
+        count = categoryUtil(count);
         return questionService.generateTest(category, count);
     }
 

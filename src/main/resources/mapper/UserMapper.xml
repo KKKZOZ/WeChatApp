@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kkkzoz.mapper.UserMapper">
-    <select id="findTeacherByStudentId" resultType="int">
+    <select id="findTeacherByStudentId" resultType="java.lang.String">
       select teacher_id
     from class_group
     where student_id = #{studentId}

@@ -49,7 +49,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
         //解析token
-        log.info("token is found");
         String openId;
         try {
             Claims claims = JwtUtil.parseJWT(token);
@@ -66,7 +65,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("用户不存在");
         }
 
-
+        log.info("token存在，用户存在");
         //存入SecurityContextHolder
         //TODO:获取权限信息封装到Authentication中
         UsernamePasswordAuthenticationToken authenticationToken =

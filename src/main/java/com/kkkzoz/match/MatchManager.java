@@ -1,15 +1,19 @@
 package com.kkkzoz.match;
 
 
+import com.alibaba.fastjson.JSON;
 import com.kkkzoz.controller.WebSocketServer;
 import com.kkkzoz.domain.entity.QueueItem;
 import com.kkkzoz.global.ResponseVO;
 import com.kkkzoz.global.ResultCode;
+import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.message.MessageVO;
 import com.kkkzoz.repository.QueueRepository;
 import com.kkkzoz.vo.ForwardingVO;
+import io.goeasy.GoEasy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,8 +29,11 @@ public class MatchManager {
 
     private final WebSocketServer webSocketServer;
 
+    private final UserMapper userMapper;
+
 
     private static final int MAX_MATCH_SIZE = 5;
+
 
     private int count = 0;
 
@@ -38,13 +45,22 @@ public class MatchManager {
     private Map<String, MatchHandler> correspondingHandlers;
 
 
+    private GoEasy goEasy;
 
-    public MatchManager(QueueRepository queueRepository, WebSocketServer webSocketServer) {
+
+
+    public MatchManager(QueueRepository queueRepository, WebSocketServer webSocketServer,UserMapper userMapper) {
+
         this.queueRepository = queueRepository;
         this.webSocketServer = webSocketServer;
 //        this.correspondingMap = new HashMap<>();
 //        this.handlers = new HashMap<>();
         this.correspondingHandlers = new HashMap<>();
+
+        this.userMapper = userMapper;
+        this.goEasy = new GoEasy
+                ("https://rest-hangzhou.goeasy.io", "BC-69353f4a5e76404d8a2c5dd26600654e");
+
     }
 
     @PostConstruct
@@ -57,7 +73,6 @@ public class MatchManager {
     public void addUserToQueue(QueueItem queueItem) {
         log.info("addUserToQueue :{}", queueItem);
         queueRepository.save(queueItem);
-        log.info("checkQueue");
         checkQueue(queueItem.getCategory());
         log.info("checkQueue over");
     }
@@ -107,6 +122,9 @@ public class MatchManager {
         log.info("forwarding:{}", forwarding);
         String senderId = forwarding.getSenderId();
         String receiverId = forwarding.getReceiverId();
+
+        String receiverUsername = userMapper.selectById(receiverId).getUsername();
+
         //TODO:考虑保存错题
         //转发消息
         try {
@@ -115,8 +133,15 @@ public class MatchManager {
             e.printStackTrace();
         }
 
-        webSocketServer
-                .send(receiverId, new MessageVO(MessageVO.FORWARDING, forwarding));
+
+        String content = JSON.toJSONString(new MessageVO(MessageVO.FORWARDING, forwarding));
+
+        goEasy.publish(receiverUsername,content);
+
+//        webSocketServer
+//                .send(receiverId, new MessageVO(MessageVO.FORWARDING, forwarding));
+
+
 
         //更新handler
 //        MatchHandler handler = handlers.get(correspondingMap.get(senderId));
@@ -141,6 +166,40 @@ public class MatchManager {
     public ResponseVO releaseResource(String userId) {
         log.info("releaseResource");
         correspondingHandlers.remove(userId);
+
+        return new ResponseVO(ResultCode.SUCCESS);
+    }
+
+    public void notifyOnClose(String userId) {
+        //userId为主动关闭webSocket的那方
+        String opponentId = correspondingHandlers.get(userId).getOpponentId(userId);
+        log.info("notifyOnClose  userId:{}", userId);
+        webSocketServer
+                .send(opponentId, new MessageVO(MessageVO.TERMINATE, null));
+    }
+
+    public ResponseVO removeUserFromQueue(String userId) {
+        log.info("removeUserFromQueue");
+        queueRepository.deleteByUserId(userId);
+        return new ResponseVO(ResultCode.SUCCESS);
+    }
+
+    public ResponseVO removeUserFromMatch(String userId) {
+        log.info("removeUserFromMatch");
+        MatchHandler handler = correspondingHandlers.get(userId);
+        String opponentId = handler.getOpponentId(userId);
+        //先删除自己的记录
+        correspondingHandlers.remove(userId);
+        if (correspondingHandlers.get(opponentId) != null) {
+            //如果自己先退出，则通知对方进行terminate
+            String opponentUsername = userMapper.selectById(opponentId).getUsername();
+            goEasy.publish(opponentUsername, new MessageVO(MessageVO.TERMINATE, null).toString());
+
+        }
+        return new ResponseVO(ResultCode.SUCCESS);
+    }
+}
+
         return new ResponseVO(ResultCode.SUCCESS);
     }
 
@@ -152,3 +211,4 @@ public class MatchManager {
                 .send(opponentId, new MessageVO(MessageVO.TERMINATE, null));
     }
 }
+

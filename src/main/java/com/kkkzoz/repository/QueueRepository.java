@@ -11,4 +11,6 @@ public interface QueueRepository
 
     List<QueueItem> findByCategory(int category);
 
+    boolean deleteByUserId(String userId);
+
 }

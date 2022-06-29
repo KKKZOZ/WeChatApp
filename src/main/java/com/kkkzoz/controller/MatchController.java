@@ -32,7 +32,6 @@ public class MatchController {
 
 
 
-
     @PostMapping("/forwarding")
     @ApiOperation(value="对手之间转发消息")
     public ResponseVO forwarding(@RequestBody ForwardingVO forwarding){
@@ -45,11 +44,14 @@ public class MatchController {
     @PostMapping("/start")
     @ApiOperation(value="开始匹配")
     public ResponseVO startMatch(@RequestBody QueueItem queueItem){
+        log.info("MatchController startMatch userId:{}", SecurityUtil.getUserId());
         String userId = SecurityUtil.getUserId();
         queueItem.setUserId(userId);
         matchManager.addUserToQueue(queueItem);
         return new ResponseVO(ResultCode.SUCCESS);
     }
+
+
 
     @PostMapping("/start/robot")
     @ApiOperation(value="开始人机匹配")
@@ -57,6 +59,23 @@ public class MatchController {
         String userId = SecurityUtil.getUserId();
         queueItem.setUserId(userId);
         return matchService.startRobotMatch(queueItem);
+    }
+    @GetMapping("/stop/queue")
+    @ApiOperation(value="停止匹配")
+    public ResponseVO stopQueuing(){
+        log.info("userId:{} 停止匹配", SecurityUtil.getUserId());
+        String userId = SecurityUtil.getUserId();
+        return matchManager.removeUserFromQueue(userId);
+
+    }
+
+    @GetMapping("/stop/match")
+    @ApiOperation(value="停止比赛")
+    public ResponseVO stopMatch(){
+        log.info("userId:{} 停止比赛", SecurityUtil.getUserId());
+        String userId = SecurityUtil.getUserId();
+        return matchManager.removeUserFromMatch(userId);
+
     }
 
     @GetMapping("/over")

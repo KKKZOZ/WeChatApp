@@ -1,6 +1,7 @@
 package com.kkkzoz.match;
 
 
+import com.alibaba.fastjson.JSON;
 import com.kkkzoz.controller.WebSocketServer;
 import com.kkkzoz.domain.entity.Match;
 import com.kkkzoz.domain.entity.User;
@@ -9,6 +10,7 @@ import com.kkkzoz.mapper.QuestionDTOMapper;
 import com.kkkzoz.mapper.UserMapper;
 import com.kkkzoz.message.MessageVO;
 import com.kkkzoz.utils.SpringUtilsAuTo;
+import io.goeasy.GoEasy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,12 +40,18 @@ public class MatchHandler {
     private String userAId;
     private String userBId;
 
+    private String userAUserName;
+
+    private String userBUserName;
+
     private boolean userAStatus = false;
     private boolean userBStatus = false;
 
     private int progress;
 
     private List<Integer> questionIdList;
+
+    private GoEasy goEasy;
 
 
     public MatchHandler(String userAId, String userBId, int category, int size) {
@@ -54,24 +62,31 @@ public class MatchHandler {
         this.questionIdList = matchGenerator.generateQuestionList(category, size);
         this.progress = 0;
 
+
+        this.userAUserName = userMapper.selectById(userAId).getUsername();
+        this.userBUserName = userMapper.selectById(userBId).getUsername();
+
+        this.goEasy= new GoEasy
+                ("https://rest-hangzhou.goeasy.io", "BC-69353f4a5e76404d8a2c5dd26600654e");
+
+//        //互相发送userId
+//        this.initialize();
+
         //互相发送userId
+
     }
 
     private void sendMessage(String sender, String receiver, MessageVO message) {
-        boolean isOK = webSocketServer
-                .send(receiver, message);
-        //如果报错，则中断这次匹配
-        //1. 向幸存方发送中断消息
-        //2. 中断这次匹配
-        if (!isOK) {
-            webSocketServer
-                    .send(sender, new MessageVO<>(MessageVO.TERMINATE, null));
-        }
+        String content = JSON.toJSONString(message);
+        goEasy.publish(receiver, content);
     }
 
     //互相发送userId,并发送第一道题
     public void initialize() {
         //username,url
+        log.info("initialize");
+        log.info("userAId:{},userBId:{}", userAId, userBId);
+        log.info("userAUserName:{},userBUserName:{}", userAUserName, userBUserName);
 
 
         Map<String, String> userAInfo = new HashMap<>();
@@ -89,15 +104,15 @@ public class MatchHandler {
         userBInfo.put("username", userB.getUsername());
         userBInfo.put("url", userB.getAvatarUrl());
 
-        sendMessage(userBId,userAId, new MessageVO<>(MessageVO.START, userBInfo));
+        sendMessage(userBUserName,userAUserName, new MessageVO<>(MessageVO.START, userBInfo));
 
-        sendMessage(userAId,userBId, new MessageVO<>(MessageVO.START, userAInfo));
+        sendMessage(userAUserName,userBUserName, new MessageVO<>(MessageVO.START, userAInfo));
 
 
         //发送第一道题
-
-        this.sendQuestion(userAId, userBId);
-        this.sendQuestion(userBId, userAId);
+        log.info("发送第一道题");
+        this.sendQuestion(userAUserName);
+        this.sendQuestion(userBUserName);
     }
 
 
@@ -119,13 +134,15 @@ public class MatchHandler {
             if (this.progress == this.size) {
                 log.info("比赛结束");
                 //比赛结束
-                webSocketServer.send(userAId, new MessageVO(MessageVO.OVER, questionIdList));
-                webSocketServer.send(userBId, new MessageVO(MessageVO.OVER, questionIdList));
+
+
+                sendMessage(userAUserName,userBUserName, new MessageVO(MessageVO.OVER, questionIdList));
+                sendMessage(userBUserName,userAUserName, new MessageVO(MessageVO.OVER, questionIdList));
                 return;
             }
 
-            this.sendQuestion(userAId, userBId);
-            this.sendQuestion(userBId, userAId);
+            this.sendQuestion(userAUserName);
+            this.sendQuestion(userBUserName);
 
             this.userAStatus = false;
             this.userBStatus = false;
@@ -133,17 +150,14 @@ public class MatchHandler {
     }
 
 
-    public void sendQuestion(String receiverId,String opponentId) {
-        //如果出错，就给对应方发送Terminate信号
-        log.info("发送题目: userId:{}, progress:{}", receiverId, this.progress);
-        boolean isOK=webSocketServer
-                .send(receiverId, new MessageVO(
-                        MessageVO.MATCH_CONTENT,
-                        getQuestion(questionIdList.get(progress), category)));
-        if(!isOK){
-            webSocketServer
-                    .send(opponentId, new MessageVO<>(MessageVO.TERMINATE, null));
-        }
+    public void sendQuestion(String receiver) {
+        //TODO:如果出错，就给对应方发送Terminate信号
+        log.info("发送题目: user:{}, progress:{}", receiver, this.progress);
+        String content = JSON.toJSONString(new MessageVO(
+                MessageVO.MATCH_CONTENT,
+                getQuestion(questionIdList.get(progress), category)));
+        goEasy.publish(receiver,content);
+
     }
 
 
