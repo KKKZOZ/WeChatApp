@@ -9,5 +9,5 @@ import java.util.List;
 public interface HistoryMatchRepository
         extends MongoRepository<HistoryMatchItem, String> {
 
-    List<HistoryMatchItem> findByUserId(int userId);
+    List<HistoryMatchItem> findByUserId(String userId);
 }

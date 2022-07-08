@@ -209,6 +209,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
             int invitationCode=-1;
             while (true) {
                 invitationCode=random.nextInt(1000,10000);
+
                 //查找这个code是否存在过
                 QueryWrapper<User> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq("invitation_code", invitationCode);
@@ -277,7 +278,19 @@ public class UserService extends ServiceImpl<UserMapper, User> implements UserDe
             return new ResponseVO(INVITATION_CODE_NOT_EXIST);
         }
         String teacherId=user.getId();
-        groupMapper.insert(new Group(teacherId,userId));
+        //先确定这个学员之前是否有过Group记录
+        Group group = groupMapper.findByStudentId(userId);
+        if (group == null) {
+            //没有过，就创建一个新的Group记录
+            group = new Group();
+            group.setStudentId(userId);
+            group.setTeacherId(teacherId);
+            groupMapper.insert(group);
+        } else {
+            //有过，就更新teacherId
+            group.setTeacherId(teacherId);
+            groupMapper.updateById(group);
+        }
         return new ResponseVO(SUCCESS);
     }
 

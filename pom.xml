@@ -129,6 +129,27 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <from>
+                        <image>ccr.ccs.tencentyun.com/kkkzoz/openjdk17</image>
+                        <auth>
+                            <username>100016895184</username>
+                            <password>Ljyws20011218??</password>
+                        </auth>
+                    </from>
+                    <to>
+                        <image>wechatapp:${project.version}</image>
+                    </to>
+                    <container>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                        <mainClass>com.kkkzoz.WeChatAppApplication</mainClass>
+                    </container>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

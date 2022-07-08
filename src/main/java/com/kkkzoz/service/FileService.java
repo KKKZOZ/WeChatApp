@@ -74,7 +74,6 @@ public class FileService {
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
         log.info("putObjectResult:{}", putObjectResult);
 
-
     }
 
     public List<DirDTO> getFileList(String userId) {

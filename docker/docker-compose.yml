@@ -1,0 +1,89 @@
+version: '3.4'
+
+services:
+  database_progres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: kkkzoz
+      POSTGRES_DB: wechatapp
+    volumes:
+      - ./DDL.sql:/docker-entrypoint-initdb.d/1-DDL.sql
+      - ./question_1.sql:/docker-entrypoint-initdb.d/2-question_1.sql
+      - ./question_4.sql:/docker-entrypoint-initdb.d/3-question_4.sql
+      - ./choice.sql:/docker-entrypoint-initdb.d/4-choice.sql
+    restart: unless-stopped
+    networks:
+      backend:
+        aliases:
+          - "database_postgres"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      backend:
+        aliases:
+          - "pgadmin"
+  database_mongodb:
+    image: mongo:focal
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+        backend:
+            aliases:
+            - "database_mongodb"
+
+  redis:
+    image: redis:alpine
+    container_name: redis-login
+    restart: always
+    ports:
+      - "6379:6379"
+    command: [ "--requirepass", "kkkzoz" ]
+    networks:
+      backend:
+        aliases:
+          - "redis"
+  wechatapp:
+    image: wechatapp:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database_mongodb
+      - database_postgres
+      - redis
+    networks:
+        backend:
+            aliases:
+            - "wechatapp"
+
+
+volumes:
+  postgres:
+  pgadmin:
+  data: {}
+networks:
+  backend:
+    driver: bridge

@@ -3,11 +3,11 @@ server:
   error:
     include-message: always
     include-binding-errors: always
-#  ssl:
-#    key-store: classpath:zhw.asia.jks
-#    key-store-password: ubuntu123??
-#    key-store-type: JKS
-#    enabled: true
+  ssl:
+    key-store: classpath:zhw.asia.jks
+    key-store-password: ubuntu123??
+    key-store-type: JKS
+    enabled: true
 
 spring:
   datasource:

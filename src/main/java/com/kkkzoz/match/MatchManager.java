@@ -31,7 +31,7 @@ public class MatchManager {
     private final UserMapper userMapper;
 
 
-    private static final int MAX_MATCH_SIZE = 50;
+    private static final int MAX_MATCH_SIZE = 5;
 
     private int count = 0;
 
@@ -182,7 +182,8 @@ public class MatchManager {
         if (correspondingHandlers.get(opponentId) != null) {
             //如果自己先退出，则通知对方进行terminate
             String opponentUsername = userMapper.selectById(opponentId).getUsername();
-            goEasy.publish(opponentUsername, new MessageVO(MessageVO.TERMINATE, null).toString());
+            String content= JSON.toJSONString(new MessageVO(MessageVO.TERMINATE, null));
+            goEasy.publish(opponentUsername, content);
 
         }
         return new ResponseVO(ResultCode.SUCCESS);

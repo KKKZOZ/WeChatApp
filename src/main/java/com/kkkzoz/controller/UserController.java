@@ -62,7 +62,6 @@ public class UserController {
     @GetMapping("/join")
     public ResponseVO joinGroup(@RequestParam("code") int code){
 
-
         String userId = SecurityUtil.getUserId();
         return userService.joinGroup(userId,code);
     }

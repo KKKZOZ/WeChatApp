@@ -44,7 +44,6 @@ public class QuestionController {
         int category= categoryUtil(Integer.parseInt(params.get("category")));
         int count= Integer.parseInt(params.get("count"));
             return questionService.getQuestionBatch(questionId,category,count);
-
     }
 
 
@@ -104,7 +103,7 @@ public class QuestionController {
     @ApiOperation(value = "生成试卷")
     public List<QuestionDTO> generateTest(@RequestParam("category") int category,
                                           @RequestParam("count") int count) {
-        count = categoryUtil(count);
+        category=categoryUtil(category);
         return questionService.generateTest(category, count);
     }
 
@@ -123,6 +122,7 @@ public class QuestionController {
             @RequestParam("testId") int testId,
             @RequestParam("category") int category) {
         String userId = SecurityUtil.getUserId();
+        category=categoryUtil(category);
         return questionService.getTestResult(userId, testId, category);
     }
 

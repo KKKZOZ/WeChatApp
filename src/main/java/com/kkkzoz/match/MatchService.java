@@ -46,7 +46,7 @@ public class MatchService {
     }
 
 
-    public List<HistoryMatchItem> getHistoryMatches(int userId) {
+    public List<HistoryMatchItem> getHistoryMatches(String userId) {
         return historyMatchRepository.findByUserId(userId);
     }
 

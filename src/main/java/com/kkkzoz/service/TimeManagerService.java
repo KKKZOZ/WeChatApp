@@ -35,6 +35,8 @@ public class TimeManagerService {
     public List<Solution> getSolutionList(int category, String teacherId, int weekOfYear) {
         return solutionRepository
                 .findByCategoryAndTeacherIdAndWeekOfYear(category, teacherId, weekOfYear);
+
+
     }
 
     public List<Solution> getSolutionList(String teacherId, int weekOfYear) {

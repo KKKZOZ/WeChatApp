@@ -93,7 +93,8 @@ public class MatchController {
 
     @GetMapping()
     @ApiOperation(value="获取历史比赛信息")
-    public List<HistoryMatchItem> getHistoryMatches(@RequestParam("userId") int userId){
+    public List<HistoryMatchItem> getHistoryMatches(){
+        String userId = SecurityUtil.getUserId();
         return matchService.getHistoryMatches(userId);
     }
 
